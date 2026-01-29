@@ -41,11 +41,11 @@ function usage() {
 	cat <<EOF
 Allows interaction with pipes via \$EDITOR by connecting it to stdin and stdout.
 
-Usage: $(basename "$0") [-t[=]template.string] [-p] [-h] [-v]
+Usage: $(basename "$0") [-t[=]TEMPLATE] [-p] [-h] [-v]
 
 Options:
-  -h, --help				Show this help message and exit.
-      --version				Show version information and exit.
+  -h, --help			Show this help message and exit.
+      --version			Show version information and exit.
   -t, --template [TEMPLATE]	Specify template for naming temporary file buffer.
   -p, --pipe-without-saving	If present, exiting \$EDITOR without saving doesn't emit an error.
 
