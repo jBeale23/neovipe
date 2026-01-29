@@ -76,7 +76,7 @@ function main() {
 			cat >"$tmp"
 		fi
 		mtime=$(stat -c %Y "$tmp" 2>/dev/null || echo 0)                                                        # Tracks file mtime before $EDITOR is invoked
-		${VISUAL:-${EDITOR:-$(which vi)}} "$tmp" </dev/tty >/dev/tty || exit $?                                            # Invokes $EDITOR with stdio connected
+		${VISUAL:-${EDITOR:-vi}} "$tmp" </dev/tty >/dev/tty || exit $?                                            # Invokes $EDITOR with stdio connected
 		if [ "$pipe_without_save" -eq 1 ] || [ "$mtime" != "$(stat -c %Y "$tmp" 2>/dev/null || echo 0)" ]; then # Only dump to stdout if file was saved while in $EDITOR and its mtime was updated, or the force pipe flag was set
 			cat "$tmp"
 			exit 0
