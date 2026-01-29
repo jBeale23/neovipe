@@ -10,7 +10,7 @@ echo "change me" > "my_input.txt"
 ```
 
 # Installation
-Just copy nvipe into your `$PATH` and you're all set.
+Just copy nvipe into your `$PATH`, make it executable, and you're all set.
 - GNU getopt is required.
 
 # Features
