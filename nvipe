@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+# ------------------------------
+# Neovipe: Interact with Pipes via $EDITOR.
+#
+# GNU GPL v2.0
+# Copyright (c) 2026 Josh Beale
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation, version 2.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, see
+# <https://www.gnu.org/licenses/>.
+#
+# MIT License
+# Copyright (c) 2014 Julian Gruber
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+# ------------------------------
+function usage() {
+	cat <<EOF
+Allows interaction with pipes via \$EDITOR by connecting it to stdin and stdout.
+
+Options:
+  -h, --help				Show this help message and exit.
+      --version				Show version information and exit.
+  -t, --template [TEMPLATE]	Specify template for naming temporary file buffer.
+  -p, --pipe-without-saving	If present, exiting \$EDITOR without saving doesn't emit an error.
+
+Example:
+	echo "change me" > "my_input.txt"
+	head -n 1 "my_input.txt" | cut -f 1 | $(basename "$0") > "my_output.txt"
+	cat "my_output.txt"
+	This text could be changed to anything you want.
+EOF
+}
+
+function version() {
+	cat <<EOF
+$(basename "$0") 0.1.0
+Copyright (c) 2026 Josh Beale <jbeale2023@gmail.com>.
+Licence: The GNU General Public License v2.0
+Adapted from the work of Julian Gruber at https://github.com/juliangruber/vipe under the terms of the MIT License.
+Adapted from the work of Joey Hess at https://github.com/madx/moreutils/blob/master/vipe under the terms of the GNU GPL v2.0.
+EOF
+}
+
+function main() {
+	template="${1}"
+	pipe_without_save="${2}"
+	tmp=$(mktemp -q "$template") && {           # Create a temp file to act as a buffer for $EDITOR with adequate randomness to avoid race condition attacks, using user template if provided
+		trap 'rm -rf "$tmp"' ERR EXIT HUP INT TERM # Removes the temp file when execution finishes, except on receipt of SIGKILL
+		if [ ! -t 0 ]; then                        # If connected to stdin, dump it to the temp file
+			cat >"$tmp"
+		fi
+		mtime=$(stat -c %Y "$tmp" 2>/dev/null || echo 0)                                                        # Tracks file mtime before $EDITOR is invoked
+		${EDITOR:-$(which vi)} "$tmp" </dev/tty >/dev/tty || exit $?                                            # Invokes editor with stdio connected
+		if [ "$pipe_without_save" -eq 1 ] || [ "$mtime" != "$(stat -c %Y "$tmp" 2>/dev/null || echo 0)" ]; then # Only dump to stdout if file was saved while in $EDITOR and its mtime was updated, or the force pipe flag was set
+			cat "$tmp"
+			exit 0
+		else
+			echo "$(basename "$0"): ${EDITOR:-vi} exited without saving"
+			exit 1
+		fi
+	} || exit 1
+}
+
+template="$(basename "$0").XXXXXXXXXXXXXXXX" # Default template used when no user-provided template is present
+pipe_without_save=0                          # By default, nvipe emits an error if the user closes the temporary file without saving.
+
+if ! OPTS=$(getopt -o hvt:p --long help,version,template:,pipe-without-save -- "$@"); then
+	cat <<EOF
+$(basename "$0"): error during argument parsing.
+Do you have GNU getopt?
+EOF
+	exit 1
+fi
+
+eval set -- "$OPTS"
+
+while true; do
+	case "$1" in
+	-h | --help)
+		usage
+		shift
+		exit 0
+		;;
+	-v | --version)
+		version
+		shift
+		exit 0
+		;;
+	-t | --template)
+		template="$2"
+		shift 2
+		;;
+	-p | --pipe-without-save)
+		shift
+		pipe_without_save=1
+		;;
+	--)
+		shift
+		break
+		;;
+	*)
+		cat <<EOF
+$(basename "$0"): invalid option -- '${1}'
+Try '$(basename "$0") --help' for more information.
+EOF
+		exit 1
+		;;
+	esac
+done
+main "$template" "$pipe_without_save"
+
+# vim: set filetype=bash:
