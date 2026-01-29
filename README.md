@@ -15,7 +15,7 @@ Just copy nvipe into your `$PATH`, make it executable, and you're all set.
 
 # Features
 In it's latest incarnation Neovipe offers the following on top of its base functionality:
-- Fallback to `vi` if `$EDITOR` is unspecified.
+- Respect `$VISUAL` and fallback to `vi` if neither `$VISUAL` nor `$EDITOR` is specified.
 - Secure temporary file creation using `mktemp` (or at least more secure, see [here](https://www.gnu.org/software/coreutils/manual/html_node/mktemp-invocation.html) for caveats).
   - `$TMPDIR` is respected if it has been set in the environment.
   - Specify a template filename with `-t` or `--template`, defaults to `nvipe.XXXXXXXXXXXXXXXX` if unspecified.
