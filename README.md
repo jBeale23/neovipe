@@ -28,4 +28,4 @@ Neovipe is adapted and updated from the following sources:
 - The work of Joey Hess at https://github.com/madx/moreutils/blob/master/vipe under the terms of the GNU General Public License version 2.0.
 
 # License
-Neovipe is licensed under the terms of the GNU General Public License version 2.0.
+Neovipe is licensed under the terms of the [GNU General Public License version 2.0](https://github.com/jBeale23/neovipe/blob/main/LICENSE).
