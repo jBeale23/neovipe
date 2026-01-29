@@ -60,7 +60,7 @@ EOF
 function version() {
 	cat <<EOF
 $(basename "$0") 0.1.2
-Copyright (c) 2026 Josh Beale <jbeale2023@gmail.com>.
+Copyright © 2026 Josh Beale <jbeale2023@gmail.com>.
 Licence: The GNU General Public License v2.0
 Adapted from the work of Julian Gruber at https://github.com/juliangruber/vipe under the terms of the MIT License.
 Adapted from the work of Joey Hess at https://github.com/madx/moreutils/blob/master/vipe under the terms of the GNU GPL v2.0.
