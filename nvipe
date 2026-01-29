@@ -41,6 +41,8 @@ function usage() {
 	cat <<EOF
 Allows interaction with pipes via \$EDITOR by connecting it to stdin and stdout.
 
+Usage: $(basename "$0") [-t[=]template.string] [-p] [-h] [-v]
+
 Options:
   -h, --help				Show this help message and exit.
       --version				Show version information and exit.
