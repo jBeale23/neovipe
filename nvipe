@@ -59,7 +59,7 @@ EOF
 
 function version() {
 	cat <<EOF
-$(basename "$0") 0.1.1
+$(basename "$0") 0.1.2
 Copyright (c) 2026 Josh Beale <jbeale2023@gmail.com>.
 Licence: The GNU General Public License v2.0
 Adapted from the work of Julian Gruber at https://github.com/juliangruber/vipe under the terms of the MIT License.
@@ -76,12 +76,12 @@ function main() {
 			cat >"$tmp"
 		fi
 		mtime=$(stat -c %Y "$tmp" 2>/dev/null || echo 0)                                                        # Tracks file mtime before $EDITOR is invoked
-		${EDITOR:-$(which vi)} "$tmp" </dev/tty >/dev/tty || exit $?                                            # Invokes editor with stdio connected
+		${VISUAL:-${EDITOR:-$(which vi)}} "$tmp" </dev/tty >/dev/tty || exit $?                                            # Invokes $EDITOR with stdio connected
 		if [ "$pipe_without_save" -eq 1 ] || [ "$mtime" != "$(stat -c %Y "$tmp" 2>/dev/null || echo 0)" ]; then # Only dump to stdout if file was saved while in $EDITOR and its mtime was updated, or the force pipe flag was set
 			cat "$tmp"
 			exit 0
 		else
-			echo "$(basename "$0"): ${EDITOR:-vi} exited without saving"
+			echo "$(basename "$0"): ${VISUAL:-${EDITOR:-vi}} exited without saving"
 			exit 1
 		fi
 	} || exit 1
