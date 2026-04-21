@@ -70,9 +70,9 @@ EOF
 function main() {
 	template="${1}"
 	pipe_without_save="${2}"
-	if tmp=$(mktemp -q "$template"); then       # Create a temp file to act as a buffer for $EDITOR with adequate randomness to avoid race condition attacks, using user template if provided
-		trap 'rm -rf "$tmp"' ERR EXIT HUP INT TERM # Removes the temp file when execution finishes, except on receipt of SIGKILL
-		if [ ! -t 0 ]; then                        # If connected to stdin, dump it to the temp file
+	if tmp=$(mktemp -q -p "${TMPDIR:-/tmp}" "$template"); then # Create a temp file to act as a buffer for $EDITOR with adequate randomness to avoid race condition attacks, using user template if provided
+		trap 'rm -rf "$tmp"' ERR EXIT HUP INT TERM                # Removes the temp file when execution finishes, except on receipt of SIGKILL
+		if [ ! -t 0 ]; then                                       # If connected to stdin, dump it to the temp file
 			cat >"$tmp"
 		fi
 		mtime=$(stat -c %Y "$tmp" 2>/dev/null || echo 0)                                                        # Tracks file mtime before $EDITOR is invoked
