@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 # ------------------------------------------------------------------------------ #
 # Neovipe: Interact with Pipes via $EDITOR.                                      #
 #                                                                                #
@@ -145,4 +145,4 @@ EOF
 done
 main "${template}" "${pipe_without_save}"
 
-# vim: set filetype=bash:
+# vim: set filetype=sh:
