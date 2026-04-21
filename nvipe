@@ -70,31 +70,31 @@ EOF
 function main() {
 	template="${1}"
 	pipe_without_save="${2}"
-	tmp=$(mktemp -q "$template") && {           # Create a temp file to act as a buffer for $EDITOR with adequate randomness to avoid race condition attacks, using user template if provided
+	if tmp=$(mktemp -q "$template"); then       # Create a temp file to act as a buffer for $EDITOR with adequate randomness to avoid race condition attacks, using user template if provided
 		trap 'rm -rf "$tmp"' ERR EXIT HUP INT TERM # Removes the temp file when execution finishes, except on receipt of SIGKILL
 		if [ ! -t 0 ]; then                        # If connected to stdin, dump it to the temp file
 			cat >"$tmp"
 		fi
 		mtime=$(stat -c %Y "$tmp" 2>/dev/null || echo 0)                                                        # Tracks file mtime before $EDITOR is invoked
-		${VISUAL:-${EDITOR:-vi}} "$tmp" </dev/tty >/dev/tty || exit $?                                            # Invokes $EDITOR with stdio connected
+		${VISUAL:-${EDITOR:-vi}} "$tmp" </dev/tty >/dev/tty || exit $?                                          # Invokes $EDITOR with stdio connected
 		if [ "$pipe_without_save" -eq 1 ] || [ "$mtime" != "$(stat -c %Y "$tmp" 2>/dev/null || echo 0)" ]; then # Only dump to stdout if file was saved while in $EDITOR and its mtime was updated, or the force pipe flag was set
 			cat "$tmp"
 			exit 0
 		else
-			echo "$(basename "$0"): ${VISUAL:-${EDITOR:-vi}} exited without saving"
+			echo "$(basename "$0") FATAL: ${VISUAL:-${EDITOR:-vi}} exited without saving" >&2
 			exit 1
 		fi
-	} || exit 1
+	else
+		echo "$(basename "$0") FATAL: failed to create temporary file" >&2
+		exit 1
+	fi
 }
 
 template="$(basename "$0").XXXXXXXXXXXXXXXX" # Default template used when no user-provided template is present
 pipe_without_save=0                          # By default, nvipe emits an error if the user closes the temporary file without saving.
 
 if ! OPTS=$(getopt -o hvt:p --long help,version,template:,pipe-without-save -- "$@"); then
-	cat <<EOF
-$(basename "$0"): error during argument parsing.
-Do you have GNU getopt?
-EOF
+	echo "$(basename "$0") FATAL: error during argument parsing." >&2
 	exit 1
 fi
 
@@ -125,7 +125,7 @@ while true; do
 		break
 		;;
 	*)
-		cat <<EOF
+		cat <<EOF >&2
 $(basename "$0"): invalid option -- '${1}'
 Try '$(basename "$0") --help' for more information.
 EOF
