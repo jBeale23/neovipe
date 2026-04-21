@@ -1,0 +1,19 @@
+# --------------------- #
+# Global Configurations #
+# --------------------- #
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+indent_style = space
+indent_size = 2
+
+# ---- #
+# Bash #
+# ---- #
+[*.sh]
+shell_variant = bash
+switch_case_indent = true
+space_redirects = true
+binary_next = true
+simplify = true
