@@ -37,6 +37,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 # ------------------------------
+
+# ------------------------------------- #
+#             Return Codes              #
+# ------------------------------------- #
+# 0: Operation Completed Successfully   #
+# 1: $EDITOR Exit Without Saving        #
+# 2: Error During Argument Parsing      #
+# 111: Failure to Create Temporary File #
+# ------------------------------------- #
+
 function usage() {
   cat <<EOF
 Allows interaction with pipes via \$EDITOR by connecting it to stdin and stdout.
@@ -86,7 +96,7 @@ function main() {
     fi
   else
     echo "$(basename "${0}") FATAL: failed to create temporary file" >&2
-    exit 1
+    exit 111
   fi
 }
 
@@ -95,7 +105,7 @@ pipe_without_save=0                            # By default, nvipe emits an erro
 
 if ! OPTS=$(getopt -o hvt:p --long help,version,template:,pipe-without-save -- "$@"); then
   echo "$(basename "${0}") FATAL: error during argument parsing." >&2
-  exit 1
+  exit 2
 fi
 
 eval set -- "${OPTS}"
@@ -129,7 +139,7 @@ while true; do
 $(basename "$0"): invalid option -- '${1}'
 Try '$(basename "${0}") --help' for more information.
 EOF
-    exit 1
+    exit 2
     ;;
   esac
 done
