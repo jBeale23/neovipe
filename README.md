@@ -1,3 +1,4 @@
+![Neovipe Logo](logo.png)
 # Neovipe
 A modern rework of vipe, turning `$EDITOR` into a pipe friendly tool.
 
