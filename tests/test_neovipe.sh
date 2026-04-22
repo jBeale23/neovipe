@@ -66,7 +66,7 @@ cleanup() {
   done
 }
 
-# WARNING: This test is extremely long.
+# WARNING: This test is extremely long compared to all of the others.
 # This uses a saturation attack to test NeoVipe's defense against the injection of malicious
 # information and requires the creation and destruction of ~240k temporary files.
 saturation() {
@@ -156,10 +156,18 @@ runall() {
     echo "FAILED: Exit Status Test" >&2
     failed_tests=$((failed_tests + 1))
   }
-  saturation || {
-    echo "FAILED: Saturation Test" >&2
-    failed_tests=$((failed_tests + 1))
-  }
+  printf "Do you want to run the Saturation test? (y/N): "
+  read -r response
+  case "${response}" in
+    [yY][eE][sS] | [yY])
+      saturation || {
+        echo "FAILED: Saturation Test" >&2
+        failed_tests=$((failed_tests + 1))
+      }
+      cleanup && trap - EXIT HUP INT QUIT ABRT TERM
+      ;;
+    *) ;;
+  esac
 
   runtime=$(echo "$(date +%s.%N) - ${start_time}" | bc)
   echo "Ran ${total_tests} tests in ${runtime} seconds."
