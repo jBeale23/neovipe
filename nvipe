@@ -60,7 +60,7 @@ Options:
   -p, --pipe-without-saving	If present, exiting \$EDITOR without saving doesn't emit an error.
 
 Example:
-	echo "change me" > "my_input.txt"
+	printf "change me\n" > "my_input.txt"
 	head -n 1 "my_input.txt" | cut -f 1 | $(basename "${0}") > "my_output.txt"
 	cat "my_output.txt"
 	This text could be changed to anything you want.

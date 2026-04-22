@@ -3,8 +3,8 @@
 A modern rework of vipe, turning `$EDITOR` into a pipe friendly tool.
 
 Allows for piping in and out of `$EDITOR` even if it doesn't normally support pipes.
-```bash
-echo "change me" > "my_input.txt"
+```sh
+printf "change me\n" > "my_input.txt"
 	head -n 1 "my_input.txt" | cut -f 1 | nvipe > "my_output.txt"
 	cat "my_output.txt"
 	This text could be changed to anything you wanted it to be in your editor.
