@@ -49,6 +49,8 @@ editing() {
 }
 
 cleanup() {
+  echo "INFO: Cleaning Up Saturation Test."
+  echo "INFO: This may take some time..."
   awk 'BEGIN {
       charset = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
       len = length(charset)
