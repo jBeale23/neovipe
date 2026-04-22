@@ -49,6 +49,7 @@ editing() {
 }
 
 cleanup() {
+  trap '' EXIT HUP INT QUIT ABRT TERM
   echo "INFO: Cleaning Up Saturation Test."
   echo "INFO: This may take some time..."
   awk 'BEGIN {
