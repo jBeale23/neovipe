@@ -86,17 +86,17 @@ main() {
       cat >"${tmp}"
     fi
     mtime=$(stat -c %Y "${tmp}" 2>/dev/null || echo 0)                                                            # Tracks file mtime before $EDITOR is invoked
-    ${VISUAL:-${EDITOR:-vi}} "${tmp}" </dev/tty >/dev/tty || exit $?                                              # Invokes $EDITOR with stdio connected
+    ${VISUAL:-${EDITOR:-vi}} "${tmp}" </dev/tty >/dev/tty || return $?                                            # Invokes $EDITOR with stdio connected
     if [ "${pipe_without_save}" -eq 1 ] || [ "${mtime}" != "$(stat -c %Y "${tmp}" 2>/dev/null || echo 0)" ]; then # Only dump to stdout if file was saved while in $EDITOR and its mtime was updated, or the force pipe flag was set
       cat "${tmp}"
-      exit 0
+      return 0
     else
       echo "$(basename "${0}") FATAL: ${VISUAL:-${EDITOR:-vi}} exited without saving" >&2
-      exit 1
+      return 1
     fi
   else
     echo "$(basename "${0}") FATAL: failed to create temporary file" >&2
-    exit 111
+    return 111
   fi
 }
 
@@ -104,8 +104,11 @@ template="$(basename "${0}").XXXXXXXXXXXXXXXX" # Default template used when no u
 pipe_without_save=0                            # By default, nvipe emits an error if the user closes the temporary file without saving.
 
 if ! OPTS=$(getopt -o hvt:p --long help,version,template:,pipe-without-save -- "$@"); then
-  echo "$(basename "${0}") FATAL: error during argument parsing." >&2
-  exit 2
+  cat <<EOF >&2
+$(basename "$0"): invalid option -- '${1}'
+Try '$(basename "${0}") --help' for more information.
+EOF
+  return 2
 fi
 
 eval set -- "${OPTS}"
@@ -115,12 +118,12 @@ while true; do
   -h | --help)
     usage
     shift
-    exit 0
+    return 0
     ;;
   -v | --version)
     version
     shift
-    exit 0
+    return 0
     ;;
   -t | --template)
     template="${2}"
@@ -139,10 +142,10 @@ while true; do
 $(basename "$0"): invalid option -- '${1}'
 Try '$(basename "${0}") --help' for more information.
 EOF
-    exit 2
+    return 2
     ;;
   esac
 done
-main "${template}" "${pipe_without_save}"
+main "${template}" "${pipe_without_save}" || return "$?"
 
 # vim: set filetype=sh:
