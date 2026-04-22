@@ -103,7 +103,7 @@ main() {
 template="$(basename "${0}").XXXXXXXXXXXXXXXX" # Default template used when no user-provided template is present
 pipe_without_save=0                            # By default, nvipe emits an error if the user closes the temporary file without saving.
 
-if ! OPTS=$(getopt -o hvt:p --long help,version,template:,pipe-without-save -- "$@"); then
+if ! OPTS=$(getopt -o hvt:p --long help,version,template:,pipe-without-save -- "$@") 2>/dev/null; then
   cat <<EOF >&2
 $(basename "$0"): invalid option -- '${1}'
 Try '$(basename "${0}") --help' for more information.
