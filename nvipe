@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 # ------------------------------------------------------------------------------ #
-# Neovipe: Interact with Pipes via $EDITOR.                                      #
+# NeoVipe: Interact with Pipes via $EDITOR.                                      #
 #                                                                                #
 # GNU GPL v2.0                                                                   #
 # Copyright © 2026 Josh Beale                                                    #
