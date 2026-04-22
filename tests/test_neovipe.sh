@@ -170,7 +170,7 @@ runall() {
     *) ;;
   esac
 
-  runtime=$(printf "$(date +%s.%N) - ${start_time}\n" | bc)
+  runtime=$(printf "%s - %s\n" "$(date +%s.%N)" "${start_time}"| bc)
   printf "Ran %s tests in %s seconds.\n" "${total_tests}" "${runtime}"
   if assert_eq_num "${failed_tests}" 0; then
     printf "PASSED Test Suite\n"
