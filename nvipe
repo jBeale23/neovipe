@@ -85,17 +85,17 @@ main() {
     if [ ! -t 0 ]; then                                        # If connected to stdin, dump it to the temp file
       cat >"${tmp}"
     fi
-    mtime=$(stat -c %Y "${tmp}" 2>/dev/null || echo 0)                                                            # Tracks file mtime before $EDITOR is invoked
-    ${VISUAL:-${EDITOR:-vi}} "${tmp}" </dev/tty >/dev/tty || return $?                                            # Invokes $EDITOR with stdio connected
-    if [ "${pipe_without_save}" -eq 1 ] || [ "${mtime}" != "$(stat -c %Y "${tmp}" 2>/dev/null || echo 0)" ]; then # Only dump to stdout if file was saved while in $EDITOR and its mtime was updated, or the force pipe flag was set
+    mtime=$(stat -c %Y "${tmp}" 2>/dev/null || printf "0")                                                            # Tracks file mtime before $EDITOR is invoked
+    ${VISUAL:-${EDITOR:-vi}} "${tmp}" </dev/tty >/dev/tty || return $?                                                # Invokes $EDITOR with stdio connected
+    if [ "${pipe_without_save}" -eq 1 ] || [ "${mtime}" != "$(stat -c %Y "${tmp}" 2>/dev/null || printf "0")" ]; then # Only dump to stdout if file was saved while in $EDITOR and its mtime was updated, or the force pipe flag was set
       cat "${tmp}"
       return 0
     else
-      echo "$(basename "${0}") FATAL: ${VISUAL:-${EDITOR:-vi}} exited without saving" >&2
+      printf "%s FATAL: %s exited without saving\n" "$(basename "${0}")" "${VISUAL:-${EDITOR:-vi}}" >&2
       return 1
     fi
   else
-    echo "$(basename "${0}") FATAL: failed to create temporary file" >&2
+    printf "%s FATAL: failed to create temporary file\n" "$(basename "${0}")" >&2
     return 111
   fi
 }

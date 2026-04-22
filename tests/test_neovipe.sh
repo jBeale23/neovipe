@@ -21,28 +21,28 @@ editing() {
   total_tests=$((total_tests + 1))
   total_subtests=0
   failed_subtests=0
-  echo "INFO: Running Editing Test."
+  printf "INFO: Running Editing Test.\n"
 
-  result=$(echo "Please save without editing this text." | "${NEOVIPE_PATH}")
+  result=$(printf "Please save without editing this text.\n" | "${NEOVIPE_PATH}")
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_str "${result}" "Please save without editing this text."; then
     failed_subtests=$((failed_subtests + 1))
   fi
 
-  result=$(echo "Please delete this text, and then save." | "${NEOVIPE_PATH}")
+  result=$(printf "Please delete this text, and then save.\n" | "${NEOVIPE_PATH}")
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_str "${result}" ""; then
     failed_subtests=$((failed_subtests + 1))
   fi
 
-  result=$(echo "Please exit without saving." | "${NEOVIPE_PATH}" --pipe-without-save)
+  result=$(printf "Please exit without saving.\n" | "${NEOVIPE_PATH}" --pipe-without-save)
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_str "${result}" "Please exit without saving."; then
     failed_subtests=$((failed_subtests + 1))
   fi
 
   if ! assert_eq_num "${failed_subtests}" 0; then
-    echo "Failed ${failed_subtests} subtests of ${total_subtests}." >&2
+    printf "Failed %s subtests of %s." "${failed_subtests}" "${total_subtests}" >&2
     return 1
   fi
 
@@ -50,8 +50,8 @@ editing() {
 
 cleanup() {
   trap '' EXIT HUP INT QUIT ABRT TERM
-  echo "INFO: Cleaning Up Saturation Test."
-  echo "INFO: This may take some time..."
+  printf "INFO: Cleaning Up Saturation Test.\n"
+  printf "INFO: This may take some time...\n"
   awk 'BEGIN {
       charset = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
       len = length(charset)
@@ -74,8 +74,8 @@ saturation() {
   total_tests=$((total_tests + 1))
   total_subtests=0
   failed_subtests=0
-  echo "INFO: Running Saturation Test."
-  echo "INFO: This may take some time..."
+  printf "INFO: Running Saturation Test.\n"
+  printf "INFO: This may take some time...\n"
 
   awk 'BEGIN {
       charset = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -99,7 +99,7 @@ saturation() {
   fi
 
   if ! assert_eq_num "${failed_subtests}" 0; then
-    echo "Failed ${failed_subtests} subtests of ${total_subtests}." >&2
+    printf "Failed %s subtests of %s.\n" "${failed_subtests}" "${total_subtests}" >&2
     return 1
   fi
 }
@@ -108,7 +108,7 @@ exit_status() {
   total_tests=$((total_tests + 1))
   total_subtests=0
   failed_subtests=0
-  echo "INFO: Running Exit Status Test."
+  printf "INFO: Running Exit Status Test.\n"
 
   "${NEOVIPE_PATH}" --an-invalid-long-option 2> /dev/null
   status="$?"
@@ -124,14 +124,14 @@ exit_status() {
     failed_subtests=$((failed_subtests + 1))
   fi
 
-  echo "Please exit without saving." | "${NEOVIPE_PATH}" 1> /dev/null 2> /dev/null
+  printf "Please exit without saving.\n" | "${NEOVIPE_PATH}" 1> /dev/null 2> /dev/null
   status="$?"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 1; then
     failed_subtests=$((failed_subtests + 1))
   fi
 
-  echo "Please exit without saving." | "${NEOVIPE_PATH}" --pipe-without-save 1> /dev/null 2> /dev/null
+  printf "Please exit without saving.\n" | "${NEOVIPE_PATH}" --pipe-without-save 1> /dev/null 2> /dev/null
   status="$?"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 0; then
@@ -139,7 +139,7 @@ exit_status() {
   fi
 
   if ! assert_eq_num "${failed_subtests}" 0; then
-    echo "Failed ${failed_subtests} subtests of ${total_subtests}." >&2
+    printf "Failed %s subtests of %s.\n" "${failed_subtests}" "${total_subtests}" >&2
     return 1
   fi
 }
@@ -150,11 +150,11 @@ runall() {
   start_time=$(date +%s.%N)
 
   editing || {
-    echo "FAILED: Editing Test" >&2
+    printf "FAILED: Editing Test\n" >&2
     failed_tests=$((failed_tests + 1))
   }
   exit_status || {
-    echo "FAILED: Exit Status Test" >&2
+    printf "FAILED: Exit Status Test\n" >&2
     failed_tests=$((failed_tests + 1))
   }
   printf "Do you want to run the Saturation test? (y/N): "
@@ -162,7 +162,7 @@ runall() {
   case "${response}" in
     [yY][eE][sS] | [yY])
       saturation || {
-        echo "FAILED: Saturation Test" >&2
+        printf "FAILED: Saturation Test\n" >&2
         failed_tests=$((failed_tests + 1))
       }
       cleanup && trap - EXIT HUP INT QUIT ABRT TERM
@@ -170,13 +170,13 @@ runall() {
     *) ;;
   esac
 
-  runtime=$(echo "$(date +%s.%N) - ${start_time}" | bc)
-  echo "Ran ${total_tests} tests in ${runtime} seconds."
+  runtime=$(printf "$(date +%s.%N) - ${start_time}\n" | bc)
+  printf "Ran %s tests in %s seconds.\n" "${total_tests}" "${runtime}"
   if assert_eq_num "${failed_tests}" 0; then
-    echo "PASSED Test Suite"
+    printf "PASSED Test Suite\n"
     return 0
   else
-    echo "Failed ${failed_tests} tests of ${total_tests}." >&2
+    printf "Failed %s tests of %s." "${failed_tests}" "${total_tests}" >&2
     return 1
   fi
 }
