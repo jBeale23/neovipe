@@ -12,7 +12,6 @@ printf "change me\n" > "my_input.txt"
 
 # Installation
 Just copy nvipe into your `$PATH`, make it executable, and you're all set.
-- GNU getopt is required.
 
 # Features
 In it's latest incarnation NeoVipe offers the following on top of its base functionality:
