@@ -82,7 +82,7 @@ main() {
   template="${1}"
   pipe_without_save="${2}"
   output_file_name="${3}"
-  if tmp=$(mktemp -q  -- "${TMPDIR:-/tmp}/${template}"); then # Create a temp file to act as a buffer for $EDITOR with adequate randomness to avoid race condition attacks, using user template if provided
+  if tmp=$(mktemp -q -- "${TMPDIR:-/tmp}/${template}"); then # Create a temp file to act as a buffer for $EDITOR with adequate randomness to avoid race condition attacks, using user template if provided
     if [ "${output_file_name}" -eq 0 ]; then
       trap 'rm -rf "${tmp}"' EXIT HUP INT QUIT ABRT TERM # Removes the temp file when execution finishes, except on receipt of SIGKILL or if the filepath is meant to be output
     fi
