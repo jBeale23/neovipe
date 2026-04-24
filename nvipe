@@ -134,6 +134,10 @@ while [ "$#" -gt 0 ]; do
     elif [ "${1}" = "*=*" ]; then
       leader="${1%%=*}="
       template="${1#"${leader}"}"
+      if [ -z "${template}" ]; then
+        printf "%s: If '--template' is specified, a template string must be provided" "$(basename "$0")" >&2
+        return 2
+      fi
       shift 1
     else
       case "${1}" in
@@ -169,6 +173,10 @@ while [ "$#" -gt 0 ]; do
         return 2
         ;;
       esac
+      if [ -z "${template}" ]; then
+        printf "%s: If '--template' is specified, a template string must be provided" "$(basename "$0")" >&2
+        return 2
+      fi
       shift 1
     fi
   elif [ "$1" = "--" ]; then
