@@ -27,7 +27,6 @@ flag_parsing() {
   status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 0; then
-    echo 1
     failed_subtests=$((failed_subtests + 1))
   fi
 
@@ -35,7 +34,6 @@ flag_parsing() {
   status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 0; then
-    echo 2
     failed_subtests=$((failed_subtests + 1))
   fi
 
@@ -43,7 +41,6 @@ flag_parsing() {
   status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 0; then
-    echo 3
     failed_subtests=$((failed_subtests + 1))
   fi
 
@@ -51,7 +48,6 @@ flag_parsing() {
   status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 0; then
-    echo 4
     failed_subtests=$((failed_subtests + 1))
   fi
 
@@ -59,7 +55,6 @@ flag_parsing() {
   status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 0; then
-    echo 5
     failed_subtests=$((failed_subtests + 1))
   fi
 
@@ -67,7 +62,6 @@ flag_parsing() {
   status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 0; then
-    echo 6
     failed_subtests=$((failed_subtests + 1))
   fi
 
@@ -75,7 +69,6 @@ flag_parsing() {
   status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 0; then
-    echo 7
     failed_subtests=$((failed_subtests + 1))
   fi
 
@@ -83,14 +76,12 @@ flag_parsing() {
   status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 0; then
-    echo 8
     failed_subtests=$((failed_subtests + 1))
   fi
 
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" -t nvipe_temp.XXX -x > /dev/null 2> /dev/null
   total_subtests=$((total_subtests + 1))
   if { ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; }; then
-    echo 9
     failed_subtests=$((failed_subtests + 1))
   fi
   rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
@@ -98,7 +89,6 @@ flag_parsing() {
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" -t=nvipe_temp.XXX -x > /dev/null 2> /dev/null
   total_subtests=$((total_subtests + 1))
   if { ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; }; then
-    echo 10
     failed_subtests=$((failed_subtests + 1))
   fi
   rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
@@ -106,7 +96,6 @@ flag_parsing() {
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" -tnvipe_temp.XXX -x > /dev/null 2> /dev/null
   total_subtests=$((total_subtests + 1))
   if { ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; }; then
-    echo 11
     failed_subtests=$((failed_subtests + 1))
   fi
   rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
@@ -114,7 +103,6 @@ flag_parsing() {
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --template nvipe_temp.XXX -x > /dev/null 2> /dev/null
   total_subtests=$((total_subtests + 1))
   if { ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; }; then
-    echo 12
     failed_subtests=$((failed_subtests + 1))
   fi
   rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
@@ -122,7 +110,6 @@ flag_parsing() {
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --template=nvipe_temp.XXX -x > /dev/null 2> /dev/null
   total_subtests=$((total_subtests + 1))
   if { ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; }; then
-    echo 13
     failed_subtests=$((failed_subtests + 1))
   fi
   rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
@@ -130,7 +117,6 @@ flag_parsing() {
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --templatenvipe_temp.XXX -x > /dev/null 2> /dev/null
   total_subtests=$((total_subtests + 1))
   if { ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; }; then
-    echo 14
     failed_subtests=$((failed_subtests + 1))
   fi
   rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
