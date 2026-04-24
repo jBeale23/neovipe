@@ -103,48 +103,72 @@ main() {
 template="$(basename "${0}").XXXXXXXXXXXXXXXX" # Default template used when no user-provided template is present
 pipe_without_save=0                            # By default, nvipe emits an error if the user closes the temporary file without saving.
 
-if ! OPTS=$(getopt -o hvt:p --long help,version,template:,pipe-without-save -- "$@") 2>/dev/null; then
-  cat <<EOF >&2
-$(basename "$0"): invalid option -- '${1}'
-Try '$(basename "${0}") --help' for more information.
-EOF
-  return 2
-fi
-
-eval set -- "${OPTS}"
-
-while true; do
-  case "${1}" in
-  -h | --help)
+while [ "$#" -gt 0 ]; do
+  if printf "%s\n" "${1}" | grep -qE -- "^(-h)|(--h(e(l(p)?)?)?)"; then
     usage
-    shift
+    shift 1
     return 0
-    ;;
-  -v | --version)
+  elif printf "%s\n" "${1}" | grep -qE -- "^(-v)|(--v(e(r(s(i(o(n)?)?)?)?)?))"; then
     version
-    shift
+    shift 1
     return 0
-    ;;
-  -t | --template)
-    template="${2}"
-    shift 2
-    ;;
-  -p | --pipe-without-save)
-    shift
+  elif printf "%s\n" "${1}" | grep -qE -- "(-p)|(--p(i(p(e(-(w(i(t(h(o(u(t(-(s(a(v(e)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?))"; then
     pipe_without_save=1
-    ;;
-  --)
-    shift
+    shift 1
+  elif printf "%s\n" "${1}" | grep -qE -- "(-t[ =]?.*?)|(--t(e(m(p(l(a(t(e)?)?)?)?)?)?)?))[ =]?.*?"; then
+    if [ "${2}" != "-*" ]; then
+      template="${2}"
+      shift 2
+    elif [ "${1}" = "*=*" ]; then
+      leader="${1%%=*}="
+      template="${1#"${leader}"}"
+      shift 1
+    else
+      case "${1}" in
+      --template*)
+        template="${1#--template}"
+        ;;
+      --templat*)
+        template="${1#--templat}"
+        ;;
+      --templa*)
+        template="${1#--templa}"
+        ;;
+      --templ*)
+        template="${1#--templ}"
+        ;;
+      --temp*)
+        template="${1#--temp}"
+        ;;
+      --tem*)
+        template="${1#--tem}"
+        ;;
+      --te*)
+        template="${1#--te}"
+        ;;
+      --t*)
+        template="${1#--t}"
+        ;;
+      -t*)
+        template="${1#-t}"
+        ;;
+      *)
+        printf "%s: invalid template format -- '%s\n'" "$(basename "$0")" "${1}" >&2
+        return 2
+        ;;
+      esac
+      shift 1
+    fi
+  elif [ "$1" = "--" ]; then
+    shift 1
     break
-    ;;
-  *)
+  else
     cat <<EOF >&2
 $(basename "$0"): invalid option -- '${1}'
 Try '$(basename "${0}") --help' for more information.
 EOF
     return 2
-    ;;
-  esac
+  fi
 done
 main "${template}" "${pipe_without_save}" || return "$?"
 
