@@ -124,6 +124,13 @@ exit_status() {
     failed_subtests=$((failed_subtests + 1))
   fi
 
+  "${NEOVIPE_PATH}" --template bad_template.XX 2> /dev/null
+  status="$?"
+  total_subtests=$((total_subtests + 1))
+  if ! assert_eq_num "${status}" 111; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+
   printf "Please exit without saving.\n" | "${NEOVIPE_PATH}" 1> /dev/null 2> /dev/null
   status="$?"
   total_subtests=$((total_subtests + 1))
