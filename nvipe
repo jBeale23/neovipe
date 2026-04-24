@@ -128,57 +128,61 @@ while [ "$#" -gt 0 ]; do
     output_file_name=1
     shift 1
   elif printf "%s\n" "${1}" | grep -qE -- "(-t.*?)|(--t(e(m(p(l(a(t(e)?)?)?)?)?)?)?)).*?"; then
-    if [ "${2}" != "-*" ]; then
-      template="${2}"
-      shift 2
-    elif [ "${1}" = "*=*" ]; then
+    case "${1}" in
+    *=*)
       leader="${1%%=*}="
       template="${1#"${leader}"}"
-      if [ -z "${template}" ]; then
-        printf "%s: If '--template' is specified, a template string must be provided" "$(basename "$0")" >&2
+      ;;
+    --template*)
+      template="${1#--template}"
+      ;;
+    --templat*)
+      template="${1#--templat}"
+      ;;
+    --templa*)
+      template="${1#--templa}"
+      ;;
+    --templ*)
+      template="${1#--templ}"
+      ;;
+    --temp*)
+      template="${1#--temp}"
+      ;;
+    --tem*)
+      template="${1#--tem}"
+      ;;
+    --te*)
+      template="${1#--te}"
+      ;;
+    --t*)
+      template="${1#--t}"
+      ;;
+    -t*)
+      template="${1#-t}"
+      ;;
+    *)
+      printf "%s: invalid template format -- '%s\n'" "$(basename "$0")" "${1}" >&2
+      return 2
+      ;;
+    esac
+    if [ -z "${template}" ]; then
+      if [ -n "${2}" ]; then
+        case "${2}" in
+        -*)
+          printf "%s: If '--template' is specified, a template string must be provided\n" "$(basename "$0")" >&2
+          return 2
+          ;;
+        *)
+          template="${2}"
+          shift 1
+          ;;
+        esac
+      else
+        printf "%s: If '--template' is specified, a template string must be provided\n" "$(basename "$0")" >&2
         return 2
       fi
-      shift 1
-    else
-      case "${1}" in
-      --template*)
-        template="${1#--template}"
-        ;;
-      --templat*)
-        template="${1#--templat}"
-        ;;
-      --templa*)
-        template="${1#--templa}"
-        ;;
-      --templ*)
-        template="${1#--templ}"
-        ;;
-      --temp*)
-        template="${1#--temp}"
-        ;;
-      --tem*)
-        template="${1#--tem}"
-        ;;
-      --te*)
-        template="${1#--te}"
-        ;;
-      --t*)
-        template="${1#--t}"
-        ;;
-      -t*)
-        template="${1#-t}"
-        ;;
-      *)
-        printf "%s: invalid template format -- '%s\n'" "$(basename "$0")" "${1}" >&2
-        return 2
-        ;;
-      esac
-      if [ -z "${template}" ]; then
-        printf "%s: If '--template' is specified, a template string must be provided" "$(basename "$0")" >&2
-        return 2
-      fi
-      shift 1
     fi
+    shift 1
   elif [ "$1" = "--" ]; then
     shift 1
     break
