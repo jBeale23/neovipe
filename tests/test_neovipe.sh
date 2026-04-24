@@ -183,7 +183,7 @@ runall() {
     printf "PASSED Test Suite\n"
     return 0
   else
-    printf "Failed %s tests of %s." "${failed_tests}" "${total_tests}" >&2
+    printf "Failed %s tests of %s.\n" "${failed_tests}" "${total_tests}" >&2
     return 1
   fi
 }
