@@ -90,7 +90,7 @@ main() {
       cat >"${tmp}"
     fi
     mtime=$(stat -c %Y "${tmp}" 2>/dev/null || printf "0")                                                            # Tracks file mtime before $EDITOR is invoked
-    ${VISUAL:-${EDITOR:-vi}} "${tmp}" </dev/tty >/dev/tty || return $?                                                # Invokes $EDITOR with stdio connected
+    ${VISUAL:-${EDITOR:-vi}} "${tmp}" </dev/tty >/dev/tty || return "${?}"                                            # Invokes $EDITOR with stdio connected
     if [ "${pipe_without_save}" -eq 1 ] || [ "${mtime}" != "$(stat -c %Y "${tmp}" 2>/dev/null || printf "0")" ]; then # Only dump to stdout if file was saved while in $EDITOR and its mtime was updated, or the force pipe flag was set
       if [ "${output_file_name}" -eq 0 ]; then
         cat "${tmp}"
@@ -112,7 +112,7 @@ template="$(basename "${0}").XXXXXXXXXXXXXXXX" # Default template used when no u
 pipe_without_save=0                            # By default, nvipe emits an error if the user closes the temporary file without saving.
 output_file_name=0                             # By default, nvipe emits file contents instead of the path to the temporary file.
 
-while [ "$#" -gt 0 ]; do
+while [ "${#}" -gt 0 ]; do
   if printf "%s\n" "${1}" | grep -qE -- "^(-h)|(--h(e(l(p)?)?)?)"; then
     usage
     shift 1
@@ -194,6 +194,6 @@ EOF
     return 2
   fi
 done
-main "${template}" "${pipe_without_save}" "${output_file_name}" || return "$?"
+main "${template}" "${pipe_without_save}" "${output_file_name}" || return "${?}"
 
 # vim: set filetype=sh:
