@@ -216,7 +216,7 @@ saturation() {
   done
   trap 'cleanup' EXIT HUP INT QUIT ABRT TERM
   "${NEOVIPE_PATH}" -t XXX 2> /dev/null
-  status="$?"
+  status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 111; then
     failed_subtests=$((failed_subtests + 1))
@@ -235,35 +235,35 @@ exit_status() {
   printf "INFO: Running Exit Status Test.\n"
 
   "${NEOVIPE_PATH}" --an-invalid-long-option 2> /dev/null
-  status="$?"
+  status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 2; then
     failed_subtests=$((failed_subtests + 1))
   fi
 
   "${NEOVIPE_PATH}" -i 2> /dev/null
-  status="$?"
+  status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 2; then
     failed_subtests=$((failed_subtests + 1))
   fi
 
   "${NEOVIPE_PATH}" --template bad_template.XX 2> /dev/null
-  status="$?"
+  status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 111; then
     failed_subtests=$((failed_subtests + 1))
   fi
 
   printf "Please exit without saving.\n" | "${NEOVIPE_PATH}" 1> /dev/null 2> /dev/null
-  status="$?"
+  status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 1; then
     failed_subtests=$((failed_subtests + 1))
   fi
 
   printf "Please exit without saving.\n" | "${NEOVIPE_PATH}" --pipe-without-save 1> /dev/null 2> /dev/null
-  status="$?"
+  status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 0; then
     failed_subtests=$((failed_subtests + 1))
