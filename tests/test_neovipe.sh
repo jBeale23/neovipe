@@ -42,7 +42,7 @@ editing() {
   fi
 
   if ! assert_eq_num "${failed_subtests}" 0; then
-    printf "Failed %s subtests of %s." "${failed_subtests}" "${total_subtests}" >&2
+    printf "Failed %s subtests of %s.\n" "${failed_subtests}" "${total_subtests}" >&2
     return 1
   fi
 
