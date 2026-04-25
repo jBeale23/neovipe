@@ -17,6 +17,116 @@ assert_eq_num() {
   return 1
 }
 
+flag_parsing() {
+  total_tests=$((total_tests + 1))
+  total_subtests=0
+  failed_subtests=0
+  printf "INFO: Running Flag Parsing Test.\n"
+
+  "${NEOVIPE_PATH}" -h > /dev/null 2> /dev/null
+  status="${?}"
+  total_subtests=$((total_subtests + 1))
+  if ! assert_eq_num "${status}" 0; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+
+  "${NEOVIPE_PATH}" --help > /dev/null 2> /dev/null
+  status="${?}"
+  total_subtests=$((total_subtests + 1))
+  if ! assert_eq_num "${status}" 0; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+
+  "${NEOVIPE_PATH}" -v > /dev/null 2> /dev/null
+  status="${?}"
+  total_subtests=$((total_subtests + 1))
+  if ! assert_eq_num "${status}" 0; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+
+  "${NEOVIPE_PATH}" --version > /dev/null 2> /dev/null
+  status="${?}"
+  total_subtests=$((total_subtests + 1))
+  if ! assert_eq_num "${status}" 0; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+
+  printf "Please exit without saving.\n" | "${NEOVIPE_PATH}" -p > /dev/null 2> /dev/null
+  status="${?}"
+  total_subtests=$((total_subtests + 1))
+  if ! assert_eq_num "${status}" 0; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+
+  printf "Please exit without saving.\n" | "${NEOVIPE_PATH}" --pipe-without-saving > /dev/null 2> /dev/null
+  status="${?}"
+  total_subtests=$((total_subtests + 1))
+  if ! assert_eq_num "${status}" 0; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+
+  printf "Please save and exit.\n" | "${NEOVIPE_PATH}" -x > /dev/null 2> /dev/null
+  status="${?}"
+  total_subtests=$((total_subtests + 1))
+  if ! assert_eq_num "${status}" 0; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+
+  printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --output-file-name > /dev/null 2> /dev/null
+  status="${?}"
+  total_subtests=$((total_subtests + 1))
+  if ! assert_eq_num "${status}" 0; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+
+  printf "Please save and exit.\n" | "${NEOVIPE_PATH}" -t nvipe_temp.XXX --output-file-name > /dev/null 2> /dev/null
+  total_subtests=$((total_subtests + 1))
+  if ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+  rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
+
+  printf "Please save and exit.\n" | "${NEOVIPE_PATH}" -t=nvipe_temp.XXX --output-file-name > /dev/null 2> /dev/null
+  total_subtests=$((total_subtests + 1))
+  if ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+  rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
+
+  printf "Please save and exit.\n" | "${NEOVIPE_PATH}" -tnvipe_temp.XXX --output-file-name > /dev/null 2> /dev/null
+  total_subtests=$((total_subtests + 1))
+  if ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+  rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
+
+  printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --template nvipe_temp.XXX --output-file-name > /dev/null 2> /dev/null
+  total_subtests=$((total_subtests + 1))
+  if ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+  rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
+
+  printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --template=nvipe_temp.XXX --output-file-name > /dev/null 2> /dev/null
+  total_subtests=$((total_subtests + 1))
+  if ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+  rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
+
+  printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --templatenvipe_temp.XXX --output-file-name > /dev/null 2> /dev/null
+  total_subtests=$((total_subtests + 1))
+  if ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+  rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
+
+  if ! assert_eq_num "${failed_subtests}" 0; then
+    printf "Failed %s subtests of %s.\n" "${failed_subtests}" "${total_subtests}" >&2
+    return 1
+  fi
+}
+
 editing() {
   total_tests=$((total_tests + 1))
   total_subtests=0
@@ -41,8 +151,14 @@ editing() {
     failed_subtests=$((failed_subtests + 1))
   fi
 
+  total_subtests=$((total_subtests + 1))
+  if ! printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --template=nvipe_temp.XXX --output-file-name | grep -q "nvipe_temp" > /dev/null 2> /dev/null; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+  rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
+
   if ! assert_eq_num "${failed_subtests}" 0; then
-    printf "Failed %s subtests of %s." "${failed_subtests}" "${total_subtests}" >&2
+    printf "Failed %s subtests of %s.\n" "${failed_subtests}" "${total_subtests}" >&2
     return 1
   fi
 
@@ -92,7 +208,7 @@ saturation() {
   done
   trap 'cleanup' EXIT HUP INT QUIT ABRT TERM
   "${NEOVIPE_PATH}" -t XXX 2> /dev/null
-  status="$?"
+  status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 111; then
     failed_subtests=$((failed_subtests + 1))
@@ -111,28 +227,35 @@ exit_status() {
   printf "INFO: Running Exit Status Test.\n"
 
   "${NEOVIPE_PATH}" --an-invalid-long-option 2> /dev/null
-  status="$?"
+  status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 2; then
     failed_subtests=$((failed_subtests + 1))
   fi
 
   "${NEOVIPE_PATH}" -i 2> /dev/null
-  status="$?"
+  status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 2; then
     failed_subtests=$((failed_subtests + 1))
   fi
 
+  "${NEOVIPE_PATH}" --template bad_template.XX 2> /dev/null
+  status="${?}"
+  total_subtests=$((total_subtests + 1))
+  if ! assert_eq_num "${status}" 111; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+
   printf "Please exit without saving.\n" | "${NEOVIPE_PATH}" 1> /dev/null 2> /dev/null
-  status="$?"
+  status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 1; then
     failed_subtests=$((failed_subtests + 1))
   fi
 
   printf "Please exit without saving.\n" | "${NEOVIPE_PATH}" --pipe-without-save 1> /dev/null 2> /dev/null
-  status="$?"
+  status="${?}"
   total_subtests=$((total_subtests + 1))
   if ! assert_eq_num "${status}" 0; then
     failed_subtests=$((failed_subtests + 1))
@@ -149,6 +272,10 @@ runall() {
   failed_tests=0
   start_time=$(date +%s.%N)
 
+  flag_parsing || {
+    printf "FAILED: Flag Parsing Test\n" >&2
+    failed_tests=$((failed_tests + 1))
+  }
   editing || {
     printf "FAILED: Editing Test\n" >&2
     failed_tests=$((failed_tests + 1))
@@ -170,13 +297,13 @@ runall() {
     *) ;;
   esac
 
-  runtime=$(printf "%s - %s\n" "$(date +%s.%N)" "${start_time}"| bc)
+  runtime=$(printf "%s - %s\n" "$(date +%s.%N)" "${start_time}" | bc)
   printf "Ran %s tests in %s seconds.\n" "${total_tests}" "${runtime}"
   if assert_eq_num "${failed_tests}" 0; then
     printf "PASSED Test Suite\n"
     return 0
   else
-    printf "Failed %s tests of %s." "${failed_tests}" "${total_tests}" >&2
+    printf "Failed %s tests of %s.\n" "${failed_tests}" "${total_tests}" >&2
     return 1
   fi
 }

@@ -12,7 +12,6 @@ printf "change me\n" > "my_input.txt"
 
 # Installation
 Just copy nvipe into your `$PATH`, make it executable, and you're all set.
-- GNU getopt is required.
 
 # Features
 In it's latest incarnation NeoVipe offers the following on top of its base functionality:
@@ -22,6 +21,7 @@ In it's latest incarnation NeoVipe offers the following on top of its base funct
   - Specify a template filename with `-t` or `--template`, defaults to `nvipe.XXXXXXXXXXXXXXXX` if unspecified.
 - Piping to stdout only continues if the file is saved in `$EDITOR`, otherwise an error is raised.
   - This behavior can be overriden by invoking NeoVipe with the `-p` or `--pipe-without-save` flags, though changes made in `$EDITOR` do not persist unless the file is saved.
+- Allows emitting filenames via the `-x` or `--output-file-name` flags for use with xargs and other similar tools.
 
 # Origin
 NeoVipe is adapted and updated from the following sources:
