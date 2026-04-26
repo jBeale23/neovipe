@@ -192,6 +192,7 @@ if [ -z "${delimiter}" ]; then
       fi
     fi
     shift 1
+  elif printf "%s\n" "${1}" | grep -qE -- "(-t)|(--t(e(m(p(l(a(t(e)?)?)?)?)?)?)?)).*?"; then
     case "${1}" in
     *=*)
       leader="${1%%=*}="
