@@ -79,6 +79,48 @@ flag_parsing() {
     failed_subtests=$((failed_subtests + 1))
   fi
 
+  printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --output-file-name -d delimiter > /dev/null 2> /dev/null
+  status="${?}"
+  total_subtests=$((total_subtests + 1))
+  if ! assert_eq_num "${status}" 0; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+
+  printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --output-file-name -d=delimiter > /dev/null 2> /dev/null
+  status="${?}"
+  total_subtests=$((total_subtests + 1))
+  if ! assert_eq_num "${status}" 0; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+
+  printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --output-file-name -ddelimiter > /dev/null 2> /dev/null
+  status="${?}"
+  total_subtests=$((total_subtests + 1))
+  if ! assert_eq_num "${status}" 0; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+
+  printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --output-file-name --delimiter delimiter > /dev/null 2> /dev/null
+  status="${?}"
+  total_subtests=$((total_subtests + 1))
+  if ! assert_eq_num "${status}" 0; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+
+  printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --output-file-name --delimiter=delimiter > /dev/null 2> /dev/null
+  status="${?}"
+  total_subtests=$((total_subtests + 1))
+  if ! assert_eq_num "${status}" 0; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+
+  printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --output-file-name --delimiter=delimiter > /dev/null 2> /dev/null
+  status="${?}"
+  total_subtests=$((total_subtests + 1))
+  if ! assert_eq_num "${status}" 0; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" -t nvipe_temp.XXX --output-file-name > /dev/null 2> /dev/null
   total_subtests=$((total_subtests + 1))
   if ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; then
