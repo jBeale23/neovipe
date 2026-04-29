@@ -207,6 +207,12 @@ editing() {
   fi
   rm -f "${TMPDIR:-/tmp}"/nvipe_temp.*
 
+  total_subtests=$((total_subtests + 1))
+  if ! printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --template=nvipe_temp.XXX --output-file-name -d=^ | grep -q "^" > /dev/null 2> /dev/null; then
+    failed_subtests=$((failed_subtests + 1))
+  fi
+  rm -f "${TMPDIR:-/tmp}"/nvipe_temp.*
+
   if ! assert_eq_num "${failed_subtests}" 0; then
     printf "Failed %s subtests of %s.\n" "${failed_subtests}" "${total_subtests}" >&2
     return 1
