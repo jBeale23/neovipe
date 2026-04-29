@@ -59,6 +59,7 @@ Options:
   -t, --template [TEMPLATE]	Specify template for naming temporary file buffer.
   -p, --pipe-without-saving	If present, exiting \$EDITOR without saving doesn't emit an error.
   -x, --output-file-name	If present, outputs temporary file name instead of contents.
+  -d, --delimiter		Sets delimiter emitted after filename when used in conjuction with file name output mode.
 
 Example:
 	printf "change me\n" > "my_input.txt"
@@ -82,6 +83,7 @@ main() {
   template="${1}"
   pipe_without_save="${2}"
   output_file_name="${3}"
+  delimiter="${4}"
   if tmp=$(mktemp -q -- "${TMPDIR:-/tmp}/${template}"); then # Create a temp file to act as a buffer for $EDITOR with adequate randomness to avoid race condition attacks, using user template if provided
     if [ "${output_file_name}" -eq 0 ]; then
       trap 'rm -rf "${tmp}"' EXIT HUP INT QUIT ABRT TERM # Removes the temp file when execution finishes, except on receipt of SIGKILL or if the filepath is meant to be output
@@ -95,7 +97,7 @@ main() {
       if [ "${output_file_name}" -eq 0 ]; then
         cat "${tmp}"
       else
-        printf "%s\n" "${tmp}"
+        printf "%s%b" "${tmp}" "${delimiter}"
       fi
       return 0
     else
@@ -111,6 +113,7 @@ main() {
 template="$(basename "${0}").XXXXXXXXXXXXXXXX" # Default template used when no user-provided template is present
 pipe_without_save=0                            # By default, nvipe emits an error if the user closes the temporary file without saving.
 output_file_name=0                             # By default, nvipe emits file contents instead of the path to the temporary file.
+delimiter="\n"                                 # By default, nvipe delimits filename output with a newline.
 
 while [ "${#}" -gt 0 ]; do
   if printf "%s\n" "${1}" | grep -qE -- "^(-h)|(--h(e(l(p)?)?)?)"; then
@@ -127,7 +130,69 @@ while [ "${#}" -gt 0 ]; do
   elif printf "%s\n" "${1}" | grep -qE -- "(-x)|(--o(u(t(p(u(t(-(f(i(l(e(-(n(a(m(e)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?)"; then
     output_file_name=1
     shift 1
-  elif printf "%s\n" "${1}" | grep -qE -- "(-t.*?)|(--t(e(m(p(l(a(t(e)?)?)?)?)?)?)?)).*?"; then
+  elif printf "%s\n${1}" | grep -qE -- "(-d)|(--d(e(l(i(m(i(t(e(r)?)?)?)?)?)?)?)?).*?"; then
+    case "${1}" in
+    *=*)
+      leader="${1%%=*}="
+      delimiter="${1#"${leader}"}"
+      ;;
+    --delimiter*)
+      delimiter="${1#--delimiter}"
+      ;;
+    --delimiter*)
+      delimiter="${1#--delimiter}"
+      ;;
+    --delimite*)
+      delimiter="${1#--delimite}"
+      ;;
+    --delimit*)
+      delimiter="${1#--delimit}"
+      ;;
+    --delimi*)
+      delimiter="${1#--delimi}"
+      ;;
+    --delim*)
+      delimiter="${1#--delim}"
+      ;;
+    --deli*)
+      delimiter="${1#--deli}"
+      ;;
+    --del*)
+      delimiter="${1#--del}"
+      ;;
+    --de*)
+      delimiter="${1#--de}"
+      ;;
+    --d*)
+      delimiter="${1#--d}"
+      ;;
+    -d*)
+      delimiter="${1#-d}"
+      ;;
+    *)
+      printf "%s: invalid delimiter format -- '%s\n'" "$(basename "$0")" "${1}" >&2
+      return 2
+      ;;
+    esac
+if [ -z "${delimiter}" ]; then
+      if [ -n "${2}" ]; then
+        case "${2}" in
+        -*)
+          printf "%s: If '--delimiter' is specified, a delimiter string must be provided\n" "$(basename "$0")" >&2
+          return 2
+          ;;
+        *)
+          delimiter="${2}"
+          shift 1
+          ;;
+        esac
+      else
+        printf "%s: If '--delimiter' is specified, a delimiter string must be provided\n" "$(basename "$0")" >&2
+        return 2
+      fi
+    fi
+    shift 1
+  elif printf "%s\n" "${1}" | grep -qE -- "(-t)|(--t(e(m(p(l(a(t(e)?)?)?)?)?)?)?)).*?"; then
     case "${1}" in
     *=*)
       leader="${1%%=*}="
@@ -194,6 +259,6 @@ EOF
     return 2
   fi
 done
-main "${template}" "${pipe_without_save}" "${output_file_name}" || return "${?}"
+main "${template}" "${pipe_without_save}" "${output_file_name}" "${delimiter}" || return "${?}"
 
 # vim: set filetype=sh:

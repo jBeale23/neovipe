@@ -22,6 +22,7 @@ In it's latest incarnation NeoVipe offers the following on top of its base funct
 - Piping to stdout only continues if the file is saved in `$EDITOR`, otherwise an error is raised.
   - This behavior can be overriden by invoking NeoVipe with the `-p` or `--pipe-without-save` flags, though changes made in `$EDITOR` do not persist unless the file is saved.
 - Allows emitting filenames via the `-x` or `--output-file-name` flags for use with xargs and other similar tools.
+  - Specify a delimiter to append to the filename via the `-d` or `--delimiter` flag. Defaults to `\n` if unspecified.
 
 # Origin
 NeoVipe is adapted and updated from the following sources:
