@@ -71,6 +71,7 @@ flag_parsing() {
   if ! assert_eq_num "${status}" 0; then
     failed_subtests=$((failed_subtests + 1))
   fi
+  rm "${TMPDIR:-/tmp}"/nvipe*
 
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --output-file-name > /dev/null 2> /dev/null
   status="${?}"
@@ -78,6 +79,7 @@ flag_parsing() {
   if ! assert_eq_num "${status}" 0; then
     failed_subtests=$((failed_subtests + 1))
   fi
+  rm "${TMPDIR:-/tmp}"/nvipe*
 
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --output-file-name -d delimiter > /dev/null 2> /dev/null
   status="${?}"
@@ -85,6 +87,7 @@ flag_parsing() {
   if ! assert_eq_num "${status}" 0; then
     failed_subtests=$((failed_subtests + 1))
   fi
+  rm "${TMPDIR:-/tmp}"/nvipe*
 
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --output-file-name -d=delimiter > /dev/null 2> /dev/null
   status="${?}"
@@ -92,6 +95,7 @@ flag_parsing() {
   if ! assert_eq_num "${status}" 0; then
     failed_subtests=$((failed_subtests + 1))
   fi
+  rm "${TMPDIR:-/tmp}"/nvipe*
 
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --output-file-name -ddelimiter > /dev/null 2> /dev/null
   status="${?}"
@@ -99,6 +103,7 @@ flag_parsing() {
   if ! assert_eq_num "${status}" 0; then
     failed_subtests=$((failed_subtests + 1))
   fi
+  rm "${TMPDIR:-/tmp}"/nvipe*
 
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --output-file-name --delimiter delimiter > /dev/null 2> /dev/null
   status="${?}"
@@ -106,6 +111,7 @@ flag_parsing() {
   if ! assert_eq_num "${status}" 0; then
     failed_subtests=$((failed_subtests + 1))
   fi
+  rm "${TMPDIR:-/tmp}"/nvipe*
 
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --output-file-name --delimiter=delimiter > /dev/null 2> /dev/null
   status="${?}"
@@ -113,6 +119,7 @@ flag_parsing() {
   if ! assert_eq_num "${status}" 0; then
     failed_subtests=$((failed_subtests + 1))
   fi
+  rm "${TMPDIR:-/tmp}"/nvipe*
 
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --output-file-name --delimiter=delimiter > /dev/null 2> /dev/null
   status="${?}"
@@ -120,48 +127,49 @@ flag_parsing() {
   if ! assert_eq_num "${status}" 0; then
     failed_subtests=$((failed_subtests + 1))
   fi
+  rm "${TMPDIR:-/tmp}"/nvipe*
 
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" -t nvipe_temp.XXX --output-file-name > /dev/null 2> /dev/null
   total_subtests=$((total_subtests + 1))
   if ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; then
     failed_subtests=$((failed_subtests + 1))
   fi
-  rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
+  rm "${TMPDIR:-/tmp}"/nvipe_temp.*
 
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" -t=nvipe_temp.XXX --output-file-name > /dev/null 2> /dev/null
   total_subtests=$((total_subtests + 1))
   if ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; then
     failed_subtests=$((failed_subtests + 1))
   fi
-  rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
+  rm -f "${TMPDIR:-/tmp}"/nvipe_temp.*
 
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" -tnvipe_temp.XXX --output-file-name > /dev/null 2> /dev/null
   total_subtests=$((total_subtests + 1))
   if ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; then
     failed_subtests=$((failed_subtests + 1))
   fi
-  rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
+  rm -f "${TMPDIR:-/tmp}"/nvipe_temp.*
 
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --template nvipe_temp.XXX --output-file-name > /dev/null 2> /dev/null
   total_subtests=$((total_subtests + 1))
   if ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; then
     failed_subtests=$((failed_subtests + 1))
   fi
-  rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
+  rm -f "${TMPDIR:-/tmp}"/nvipe_temp.*
 
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --template=nvipe_temp.XXX --output-file-name > /dev/null 2> /dev/null
   total_subtests=$((total_subtests + 1))
   if ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; then
     failed_subtests=$((failed_subtests + 1))
   fi
-  rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
+  rm -f "${TMPDIR:-/tmp}"/nvipe_temp.*
 
   printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --templatenvipe_temp.XXX --output-file-name > /dev/null 2> /dev/null
   total_subtests=$((total_subtests + 1))
   if ! ls "${TMPDIR:-/tmp}"/nvipe_temp.* > /dev/null; then
     failed_subtests=$((failed_subtests + 1))
   fi
-  rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
+  rm -f "${TMPDIR:-/tmp}"/nvipe_temp.*
 
   if ! assert_eq_num "${failed_subtests}" 0; then
     printf "Failed %s subtests of %s.\n" "${failed_subtests}" "${total_subtests}" >&2
@@ -197,7 +205,7 @@ editing() {
   if ! printf "Please save and exit.\n" | "${NEOVIPE_PATH}" --template=nvipe_temp.XXX --output-file-name | grep -q "nvipe_temp" > /dev/null 2> /dev/null; then
     failed_subtests=$((failed_subtests + 1))
   fi
-  rm -f "${TMPDIR:-/tmp}/nvipe_temp.*"
+  rm -f "${TMPDIR:-/tmp}"/nvipe_temp.*
 
   if ! assert_eq_num "${failed_subtests}" 0; then
     printf "Failed %s subtests of %s.\n" "${failed_subtests}" "${total_subtests}" >&2
