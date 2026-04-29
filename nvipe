@@ -174,7 +174,7 @@ while [ "${#}" -gt 0 ]; do
       return 2
       ;;
     esac
-if [ -z "${delimiter}" ]; then
+    if [ -z "${delimiter}" ]; then
       if [ -n "${2}" ]; then
         case "${2}" in
         -*)
