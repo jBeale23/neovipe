@@ -12,6 +12,10 @@ printf "change me\n" > "my_input.txt"
 
 # Installation
 Just copy nvipe into your `$PATH`, make it executable, and you're all set.
+To optionally enable tab completion for Bash and Zsh, add the following to the corresponding .rc file:
+```sh
+source /path/to/your/NeoVipe/installation/nvipe-completion.sh
+```
 
 # Features
 In it's latest incarnation NeoVipe offers the following on top of its base functionality:
