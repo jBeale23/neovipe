@@ -18,7 +18,7 @@ This test ensures that NeoVipe exits with an appropriate error code when somethi
 This is a minimalistic Dockerfile consisting of an Ubuntu 24.04 image with zsh added for the purposes of testing tab completion.
 You can build and run it as follows from this directory:
 ```sh
-docker build -it nvipe:test .
+docker build -t nvipe:test .
 cd ..
 docker run -v $(pwd):/NeoVipe -it nvipe:test zsh
 ```
