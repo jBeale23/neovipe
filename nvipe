@@ -139,9 +139,6 @@ while [ "${#}" -gt 0 ]; do
     --delimiter*)
       delimiter="${1#--delimiter}"
       ;;
-    --delimiter*)
-      delimiter="${1#--delimiter}"
-      ;;
     --delimite*)
       delimiter="${1#--delimite}"
       ;;
