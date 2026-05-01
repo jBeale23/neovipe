@@ -58,5 +58,5 @@ if [[ -n "${ZSH_VERSION:-}" ]]; then
 elif [[ -n "${BASH_VERSION:-}" ]]; then
   complete -F _complete_nvipe_bash nvipe
 else
-  printf "Tab Completion for your shell: %s is not currently supported\nOpen an issue on NeoVipe's GitHub or submit a pull request with a patch.\n" "$SHELL" >&2
+  printf "Tab Completion for your shell is not currently supported\nOpen an issue on NeoVipe's GitHub or submit a pull request with a patch.\n" >&2
 fi
