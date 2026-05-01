@@ -2,6 +2,9 @@
 Unfortunately, I have yet to find a way to fully automate testing, as some of NeoVipe's behavior depends on end user input, so for now this must be run manually.
 To run the tests, simply invoke ./test_neovipe.sh directly or via sh, then follow the instructions as they appear in your $EDITOR.
 
+## The Flag Parsing Tests
+These ensure that NeoVipe accurately parses its command line arguments.
+
 ## The Editing Tests
 These ensure that NeoVipe appropriately emits edited output when it should, and fails to when it shouldn't.
 
