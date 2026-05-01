@@ -59,8 +59,8 @@ Options:
       --init			Emit a command string to initialize shell completion and exit.
   -t, --template [TEMPLATE]	Specify template for naming temporary file buffer.
   -p, --pipe-without-saving	If present, exiting \$EDITOR without saving doesn't emit an error.
-  -x, --output-file-name	If present, outputs temporary file name instead of contents.
-  -d, --delimiter [DELIMITER]	Sets the delimiter emitted after filename when used in conjunction with file name output mode.
+  -x, --output-file-name	If present, output temporary file name instead of contents.
+  -d, --delimiter [DELIMITER]	Set the delimiter emitted after filename when used in conjunction with file name output mode.
 
 Example:
 	printf "change me\n" > "my_input.txt"

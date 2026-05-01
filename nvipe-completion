@@ -14,10 +14,10 @@ _generate_nvipe_completions() {
     "-t: Specify template for naming temporary file buffer."
     "--pipe-without-saving: If present, exiting \$EDITOR without saving doesn't emit an error."
     "-p: If present, exiting \$EDITOR without saving doesn't emit an error."
-    "--output-file-name: If present, outputs temporary file name instead of contents."
-    "-x: If present, outputs temporary file name instead of contents."
-    "--delimiter: Sets the delimiter emitted after filename when used in conjunction with file name output mode."
-    "-d: Sets the delimiter emitted after filename when used in conjunction with file name output mode."
+    "--output-file-name: If present, output temporary file name instead of contents."
+    "-x: If present, output temporary file name instead of contents."
+    "--delimiter: Set the delimiter emitted after filename when used in conjunction with file name output mode."
+    "-d: Set the delimiter emitted after filename when used in conjunction with file name output mode."
   )
   for elem in "${array[@]}"; do
     if [[ ${elem} == "${current_word}"* ]]; then printf "%s\n" "${elem}"; fi
