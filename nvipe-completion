@@ -1,5 +1,6 @@
 _generate_nvipe_completions() {
-  local idx=$1; shift
+  local idx=$1
+  shift
   local words=( "$@" )
   local current_word=${words[idx]}
 
@@ -18,13 +19,13 @@ _generate_nvipe_completions() {
     "-d: Sets the delimiter emitted after filename when used in conjunction with file name output mode."
   )
   for elem in "${array[@]}"; do
-    if [[ $elem == "$current_word"* ]]; then printf "%s\n" "$elem"; fi
+    if [[ ${elem} == "${current_word}"* ]]; then printf "%s\n" "${elem}"; fi
   done
 }
 
 _complete_nvipe_bash() {
   local IFS=$'\n'
-  local raw=($(_generate_nvipe_completions "$COMP_CWORD" "${COMP_WORDS[@]}"))
+  local raw=($(_generate_nvipe_completions "${COMP_CWORD}" "${COMP_WORDS[@]}"))
   local trimmed=()
   trimmed+=( "${raw[@]}" )
 
@@ -38,21 +39,21 @@ _complete_nvipe_bash() {
 _complete_nvipe_zsh() {
   local -a raw trimmed
   local IFS=$'\n'
-  raw=($(_generate_nvipe_completions "$CURRENT" "${words[@]}"))
+  raw=($(_generate_nvipe_completions "${CURRENT}" "${words[@]}"))
 
-  for d in $raw; do trimmed+=( "${d%%:*}" ); done
+  for arg in "${raw[@]}"; do trimmed+=( "${arg%%:*}" ); done
   if (( ${#raw} == 1 )); then
     trimmed+=( "${raw[1]}" )
     raw+=( "${trimmed[1]}" )
   fi
 
-  compadd -d raw -- $trimmed
+  compadd -d raw -- "${trimmed[@]}"
 }
 
-if [ -n "${ZSH_VERSION:-}" ]; then
+if [[ -n "${ZSH_VERSION:-}" ]]; then
   autoload -Uz compinit
   compinit
   compdef _complete_nvipe_zsh nvipe
-elif [ -n "${BASH_VERSION:-}" ]; then
+elif [[ -n "${BASH_VERSION:-}" ]]; then
   complete -F _complete_nvipe_bash nvipe
 fi
