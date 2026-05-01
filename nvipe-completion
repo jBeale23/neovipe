@@ -1,7 +1,7 @@
 _generate_nvipe_completions() {
   local idx=$1
   shift
-  local words=( "$@" )
+  local words=("$@")
   local current_word=${words[idx]}
 
   local array=(
@@ -28,13 +28,13 @@ _complete_nvipe_bash() {
   local IFS=$'\n'
   local raw=($(_generate_nvipe_completions "${COMP_CWORD}" "${COMP_WORDS[@]}"))
   local trimmed=()
-  trimmed+=( "${raw[@]}" )
+  trimmed+=("${raw[@]}")
 
-  if (( ${#raw[@]} == 1 )); then
-    trimmed+=( "${raw[0]%%:*}" )
+  if ((${#raw[@]} == 1)); then
+    trimmed+=("${raw[0]%%:*}")
   fi
 
-  COMPREPLY=( "${trimmed[@]}" )
+  COMPREPLY=("${trimmed[@]}")
 }
 
 _complete_nvipe_zsh() {
@@ -42,10 +42,10 @@ _complete_nvipe_zsh() {
   local IFS=$'\n'
   raw=($(_generate_nvipe_completions "${CURRENT}" "${words[@]}"))
 
-  for arg in "${raw[@]}"; do trimmed+=( "${arg%%:*}" ); done
-  if (( ${#raw} == 1 )); then
-    trimmed+=( "${raw[1]}" )
-    raw+=( "${trimmed[1]}" )
+  for arg in "${raw[@]}"; do trimmed+=("${arg%%:*}"); done
+  if ((${#raw} == 1)); then
+    trimmed+=("${raw[1]}")
+    raw+=("${trimmed[1]}")
   fi
 
   compadd -d raw -- "${trimmed[@]}"
@@ -60,3 +60,5 @@ elif [[ -n "${BASH_VERSION:-}" ]]; then
 else
   printf "Tab Completion for your shell is not currently supported\nOpen an issue on NeoVipe's GitHub or submit a pull request with a patch.\n" >&2
 fi
+
+# vim: set filetype=sh:
