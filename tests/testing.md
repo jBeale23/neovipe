@@ -13,3 +13,12 @@ These ensure that NeoVipe emits the appropriate return code when something goes 
 
 ## The Saturation Test
 This test ensures that NeoVipe exits with an appropriate error code when something causes a failure in temporary file creation. It does so by generating all possible 3 digit alphanumeric filenames, guaranteeing that a collision will occur. Naturally, this test takes substantially longer than the others (~4 minutes to run and clean up on my machine), and thus the user is prompted to ask if they want to run it.
+
+## The Dockerfile
+This is a minimalistic Dockerfile consisting of an Ubuntu 24.04 image with zsh added for the purposes of testing tab completion.
+You can build and run it as follows from this directory:
+```sh
+docker build -it nvipe:test .
+cd ..
+docker run -v $(pwd):/NeoVipe -it nvipe:test zsh
+```
