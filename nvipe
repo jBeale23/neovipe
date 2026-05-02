@@ -82,7 +82,7 @@ EOF
 
 init() {
   dir=$(CDPATH="" cd -- "$(dirname -- "$0")" && pwd -P)
-  printf ". %s/nvipe-completion" "${dir}"
+  [ -f "${dir}/nvipe-completion" ] && printf ". %s/nvipe-completion" "${dir}"
 }
 
 main() {
