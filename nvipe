@@ -48,72 +48,74 @@
 # ------------------------------------- #
 
 usage() {
-  cat <<EOF
-Allows interaction with pipes via \$EDITOR by connecting it to stdin and stdout.
+	cat <<-EOF
+		Allows interaction with pipes via \$EDITOR by connecting it to stdin and stdout.
 
-Usage: $(basename "${0}") [-t[=]TEMPLATE] [-p] [-x [-d[=]DELIMITER]] [-h]|[-v]
+		Usage: $(basename "${0}") [-t[=]TEMPLATE] [-p] [-x [-d[=]DELIMITER]] [-h]|[-v]
 
-Options:
-  -h, --help			Show this help message and exit.
-  -v, --version			Show version information and exit.
-      --init			Emit a command string to initialize shell completion and exit.
-  -t, --template [TEMPLATE]	Specify template for naming temporary file buffer.
-  -p, --pipe-without-saving	If present, exiting \$EDITOR without saving doesn't emit an error.
-  -x, --output-file-name	If present, output temporary file name instead of contents.
-  -d, --delimiter [DELIMITER]	Set the delimiter emitted after filename when used in conjunction with file name output mode.
+		Options:
+		  -h, --help                    Show this help message and exit.
+		  -v, --version                 Show version information and exit.
+		      --init                    Emit a command string to initialize shell completion and exit.
+		  -t, --template [TEMPLATE]   Specify template for naming temporary file buffer.
+		  -p, --pipe-without-saving   If present, exiting \$EDITOR without saving doesn't emit an error.
+		  -x, --output-file-name      If present, output temporary file name instead of contents.
+		  -d, --delimiter [DELIMITER] Set the delimiter emitted after filename when used in conjunction with file name output mode.
 
-Example:
-	printf "change me\n" > "my_input.txt"
-	head -n 1 "my_input.txt" | cut -f 1 | $(basename "${0}") > "my_output.txt"
-	cat "my_output.txt"
-	This text could be changed to anything you want.
-EOF
+		Example:
+			printf "change me\n" > "my_input.txt"
+			head -n 1 "my_input.txt" | cut -f 1 | $(basename "${0}") > "my_output.txt"
+			cat "my_output.txt"
+			This text could be changed to anything you want.
+	EOF
 }
 
 version() {
-  cat <<EOF
-$(basename "${0}") 1.0.0
-Copyright © 2026 Josh Beale <jbeale2023@gmail.com>.
-Licence: The GNU General Public License v2.0
-Adapted from the work of Julian Gruber at https://github.com/juliangruber/vipe under the terms of the MIT License.
-Adapted from the work of Joey Hess at https://github.com/madx/moreutils/blob/master/vipe under the terms of the GNU GPL v2.0.
-EOF
+	cat <<-EOF
+		$(basename "${0}") 1.0.0
+		Copyright © 2026 Josh Beale <jbeale2023@gmail.com>.
+		Licence: The GNU General Public License v2.0
+		Adapted from the work of Julian Gruber at https://github.com/juliangruber/vipe under the terms of the MIT License.
+		Adapted from the work of Joey Hess at https://github.com/madx/moreutils/blob/master/vipe under the terms of the GNU GPL v2.0.
+	EOF
 }
 
 init() {
-  dir=$(CDPATH="" cd -- "$(dirname -- "$0")" && pwd -P)
-  [ -f "${dir}/nvipe-completion" ] && printf ". %s/nvipe-completion" "${dir}"
+	dir=$(CDPATH="" cd -- "$(dirname -- "${0}")" && pwd -P)
+	if [ -f "${dir}/nvipe-completion" ]; then
+		printf ". %s/nvipe-completion" "${dir}"
+	fi
 }
 
 main() {
-  template="${1}"
-  pipe_without_save="${2}"
-  output_file_name="${3}"
-  delimiter="${4}"
-  if tmp=$(mktemp -q -- "${TMPDIR:-/tmp}/${template}"); then # Create a temp file to act as a buffer for $EDITOR with adequate randomness to avoid race condition attacks, using user template if provided
-    if [ "${output_file_name}" -eq 0 ]; then
-      trap 'rm -rf "${tmp}"' EXIT HUP INT QUIT ABRT TERM # Removes the temp file when execution finishes, except on receipt of SIGKILL or if the filepath is meant to be output
-    fi
-    if [ ! -t 0 ]; then # If connected to stdin, dump it to the temp file
-      cat >"${tmp}"
-    fi
-    mtime=$(stat -c %Y "${tmp}" 2>/dev/null || printf "0")                                                            # Tracks file mtime before $EDITOR is invoked
-    ${VISUAL:-${EDITOR:-vi}} "${tmp}" </dev/tty >/dev/tty || return "${?}"                                            # Invokes $EDITOR with stdio connected
-    if [ "${pipe_without_save}" -eq 1 ] || [ "${mtime}" != "$(stat -c %Y "${tmp}" 2>/dev/null || printf "0")" ]; then # Only dump to stdout if file was saved while in $EDITOR and its mtime was updated, or the force pipe flag was set
-      if [ "${output_file_name}" -eq 0 ]; then
-        cat "${tmp}"
-      else
-        printf "%s%b" "${tmp}" "${delimiter}"
-      fi
-      return 0
-    else
-      printf "%s FATAL: %s exited without saving\n" "$(basename "${0}")" "${VISUAL:-${EDITOR:-vi}}" >&2
-      return 1
-    fi
-  else
-    printf "%s FATAL: failed to create temporary file\n" "$(basename "${0}")" >&2
-    return 111
-  fi
+	template="${1}"
+	pipe_without_save="${2}"
+	output_file_name="${3}"
+	delimiter="${4}"
+	if tmp=$(mktemp -q -- "${TMPDIR:-/tmp}/${template}"); then # Create a temp file to act as a buffer for $EDITOR with adequate randomness to avoid race condition attacks, using user template if provided
+		if [ "${output_file_name}" -eq 0 ]; then
+			trap 'rm -rf "${tmp}"' EXIT HUP INT QUIT ABRT TERM # Removes the temp file when execution finishes, except on receipt of SIGKILL or if the filepath is meant to be output
+		fi
+		if [ ! -t 0 ]; then # If connected to stdin, dump it to the temp file
+			cat >"${tmp}"
+		fi
+		mtime=$(stat -c %Y "${tmp}" 2>/dev/null || printf "0")                                                            # Tracks file mtime before $EDITOR is invoked
+		${VISUAL:-${EDITOR:-vi}} "${tmp}" </dev/tty >/dev/tty || return "${?}"                                            # Invokes $EDITOR with stdio connected
+		if [ "${pipe_without_save}" -eq 1 ] || [ "${mtime}" != "$(stat -c %Y "${tmp}" 2>/dev/null || printf "0")" ]; then # Only dump to stdout if file was saved while in $EDITOR and its mtime was updated, or the force pipe flag was set
+			if [ "${output_file_name}" -eq 0 ]; then
+				cat "${tmp}"
+			else
+				printf "%s%b" "${tmp}" "${delimiter}"
+			fi
+			return 0
+		else
+			printf "%s FATAL: %s exited without saving\n" "$(basename "${0}")" "${VISUAL:-${EDITOR:-vi}}" >&2
+			return 1
+		fi
+	else
+		printf "%s FATAL: failed to create temporary file\n" "$(basename "${0}")" >&2
+		return 111
+	fi
 }
 
 template="$(basename "${0}").XXXXXXXXXXXXXXXX" # Default template used when no user-provided template is present
@@ -122,150 +124,148 @@ output_file_name=0                             # By default, nvipe emits file co
 delimiter="\n"                                 # By default, nvipe delimits filename output with a newline.
 
 while [ "${#}" -gt 0 ]; do
-  if printf "%s\n" "${1}" | grep -qE -- "^(-h)|(--h(e(l(p)?)?)?)"; then
-    usage
-    shift 1
-    return 0
-  elif printf "%s\n" "${1}" | grep -qE -- "^(-v)|(--v(e(r(s(i(o(n)?)?)?)?)?))"; then
-    version
-    shift 1
-    return 0
-  elif printf "%s\n" "${1}" | grep -qE -- "--i(n(i(t)?)?)?"; then
-    printf "%s\n" "$(init)"
-    shift 1
-    return 0
-  elif printf "%s\n" "${1}" | grep -qE -- "(-p)|(--p(i(p(e(-(w(i(t(h(o(u(t(-(s(a(v(e)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?))"; then
-    pipe_without_save=1
-    shift 1
-  elif printf "%s\n" "${1}" | grep -qE -- "(-x)|(--o(u(t(p(u(t(-(f(i(l(e(-(n(a(m(e)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?)"; then
-    output_file_name=1
-    shift 1
-  elif printf "%s\n${1}" | grep -qE -- "(-d)|(--d(e(l(i(m(i(t(e(r)?)?)?)?)?)?)?)?).*?"; then
-    case "${1}" in
-    *=*)
-      leader="${1%%=*}="
-      delimiter="${1#"${leader}"}"
-      ;;
-    --delimiter*)
-      delimiter="${1#--delimiter}"
-      ;;
-    --delimite*)
-      delimiter="${1#--delimite}"
-      ;;
-    --delimit*)
-      delimiter="${1#--delimit}"
-      ;;
-    --delimi*)
-      delimiter="${1#--delimi}"
-      ;;
-    --delim*)
-      delimiter="${1#--delim}"
-      ;;
-    --deli*)
-      delimiter="${1#--deli}"
-      ;;
-    --del*)
-      delimiter="${1#--del}"
-      ;;
-    --de*)
-      delimiter="${1#--de}"
-      ;;
-    --d*)
-      delimiter="${1#--d}"
-      ;;
-    -d*)
-      delimiter="${1#-d}"
-      ;;
-    *)
-      printf "%s: invalid delimiter format -- '%s\n'" "$(basename "$0")" "${1}" >&2
-      return 2
-      ;;
-    esac
-    if [ -z "${delimiter}" ]; then
-      if [ -n "${2}" ]; then
-        case "${2}" in
-        -*)
-          printf "%s: If '--delimiter' is specified, a delimiter string must be provided\n" "$(basename "$0")" >&2
-          return 2
-          ;;
-        *)
-          delimiter="${2}"
-          shift 1
-          ;;
-        esac
-      else
-        printf "%s: If '--delimiter' is specified, a delimiter string must be provided\n" "$(basename "$0")" >&2
-        return 2
-      fi
-    fi
-    shift 1
-  elif printf "%s\n" "${1}" | grep -qE -- "(-t)|(--t(e(m(p(l(a(t(e)?)?)?)?)?)?)?)).*?"; then
-    case "${1}" in
-    *=*)
-      leader="${1%%=*}="
-      template="${1#"${leader}"}"
-      ;;
-    --template*)
-      template="${1#--template}"
-      ;;
-    --templat*)
-      template="${1#--templat}"
-      ;;
-    --templa*)
-      template="${1#--templa}"
-      ;;
-    --templ*)
-      template="${1#--templ}"
-      ;;
-    --temp*)
-      template="${1#--temp}"
-      ;;
-    --tem*)
-      template="${1#--tem}"
-      ;;
-    --te*)
-      template="${1#--te}"
-      ;;
-    --t*)
-      template="${1#--t}"
-      ;;
-    -t*)
-      template="${1#-t}"
-      ;;
-    *)
-      printf "%s: invalid template format -- '%s\n'" "$(basename "$0")" "${1}" >&2
-      return 2
-      ;;
-    esac
-    if [ -z "${template}" ]; then
-      if [ -n "${2}" ]; then
-        case "${2}" in
-        -*)
-          printf "%s: If '--template' is specified, a template string must be provided\n" "$(basename "$0")" >&2
-          return 2
-          ;;
-        *)
-          template="${2}"
-          shift 1
-          ;;
-        esac
-      else
-        printf "%s: If '--template' is specified, a template string must be provided\n" "$(basename "$0")" >&2
-        return 2
-      fi
-    fi
-    shift 1
-  elif [ "$1" = "--" ]; then
-    shift 1
-    break
-  else
-    cat <<EOF >&2
-$(basename "$0"): invalid option -- '${1}'
-Try '$(basename "${0}") --help' for more information.
-EOF
-    return 2
-  fi
+	if printf "%s\n" "${1}" | grep -qE -- "^(-h)|(--h(e(l(p)?)?)?)"; then
+		usage
+		shift 1
+		return 0
+	elif printf "%s\n" "${1}" | grep -qE -- "^(-v)|(--v(e(r(s(i(o(n)?)?)?)?)?)?)"; then
+		version
+		shift 1
+		return 0
+	elif printf "%s\n" "${1}" | grep -qE -- "--i(n(i(t)?)?)?"; then
+		printf "%s\n" "$(init)"
+		shift 1
+		return 0
+	elif printf "%s\n" "${1}" | grep -qE -- "(-p)|(--p(i(p(e(-(w(i(t(h(o(u(t(-(s(a(v(e)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?))"; then
+		pipe_without_save=1
+		shift 1
+	elif printf "%s\n" "${1}" | grep -qE -- "(-x)|(--o(u(t(p(u(t(-(f(i(l(e(-(n(a(m(e)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?)"; then
+		output_file_name=1
+		shift 1
+	elif printf "%s\n${1}" | grep -qE -- "(-d)|(--d(e(l(i(m(i(t(e(r)?)?)?)?)?)?)?)?).*?"; then
+		case "${1}" in
+		*=*)
+			leader="${1%%=*}="
+			delimiter="${1#"${leader}"}"
+			;;
+		--delimiter*)
+			delimiter="${1#--delimiter}"
+			;;
+		--delimite*)
+			delimiter="${1#--delimite}"
+			;;
+		--delimit*)
+			delimiter="${1#--delimit}"
+			;;
+		--delimi*)
+			delimiter="${1#--delimi}"
+			;;
+		--delim*)
+			delimiter="${1#--delim}"
+			;;
+		--deli*)
+			delimiter="${1#--deli}"
+			;;
+		--del*)
+			delimiter="${1#--del}"
+			;;
+		--de*)
+			delimiter="${1#--de}"
+			;;
+		--d*)
+			delimiter="${1#--d}"
+			;;
+		-d*)
+			delimiter="${1#-d}"
+			;;
+		*)
+			printf "%s: invalid delimiter format -- '%s\n'" "$(basename "${0}")" "${1}" >&2
+			return 2
+			;;
+		esac
+		if [ -z "${delimiter}" ]; then
+			if [ -n "${2}" ]; then
+				case "${2}" in
+				-*)
+					printf "%s: If '--delimiter' is specified, a delimiter string must be provided\n" "$(basename "${0}")" >&2
+					return 2
+					;;
+				*)
+					delimiter="${2}"
+					shift 1
+					;;
+				esac
+			else
+				printf "%s: If '--delimiter' is specified, a delimiter string must be provided\n" "$(basename "${0}")" >&2
+				return 2
+			fi
+		fi
+		shift 1
+	elif printf "%s\n" "${1}" | grep -qE -- "(-t)|(--t(e(m(p(l(a(t(e)?)?)?)?)?)?)?)).*?"; then
+		case "${1}" in
+		*=*)
+			leader="${1%%=*}="
+			template="${1#"${leader}"}"
+			;;
+		--template*)
+			template="${1#--template}"
+			;;
+		--templat*)
+			template="${1#--templat}"
+			;;
+		--templa*)
+			template="${1#--templa}"
+			;;
+		--templ*)
+			template="${1#--templ}"
+			;;
+		--temp*)
+			template="${1#--temp}"
+			;;
+		--tem*)
+			template="${1#--tem}"
+			;;
+		--te*)
+			template="${1#--te}"
+			;;
+		--t*)
+			template="${1#--t}"
+			;;
+		-t*)
+			template="${1#-t}"
+			;;
+		*)
+			printf "%s: invalid template format -- '%s\n'" "$(basename "${0}")" "${1}" >&2
+			return 2
+			;;
+		esac
+		if [ -z "${template}" ]; then
+			if [ -n "${2}" ]; then
+				case "${2}" in
+				-*)
+					printf "%s: If '--template' is specified, a template string must be provided\n" "$(basename "${0}")" >&2
+					return 2
+					;;
+				*)
+					template="${2}"
+					shift 1
+					;;
+				esac
+			else
+				printf "%s: If '--template' is specified, a template string must be provided\n" "$(basename "${0}")" >&2
+				return 2
+			fi
+		fi
+		shift 1
+	elif [ "${1}" = "--" ]; then
+		shift 1
+		break
+	else
+		cat <<-EOF >&2
+			$(basename "${0}"): invalid option -- '${1}'
+			Try '$(basename "${0}") --help' for more information.
+		EOF
+		return 2
+	fi
 done
 main "${template}" "${pipe_without_save}" "${output_file_name}" "${delimiter}" || return "${?}"
-
-# vim: set filetype=sh:
