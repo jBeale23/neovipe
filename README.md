@@ -12,6 +12,8 @@ printf "change me\n" > "my_input.txt"
 
 # Installation
 Just copy nvipe into your `$PATH`, make it executable, and you're all set.
+To optionally enable tab completion for Bash and Zsh, source the included `nvipe-completion` file.
+
 
 # Features
 In it's latest incarnation NeoVipe offers the following on top of its base functionality:
@@ -23,6 +25,7 @@ In it's latest incarnation NeoVipe offers the following on top of its base funct
   - This behavior can be overriden by invoking NeoVipe with the `-p` or `--pipe-without-save` flags, though changes made in `$EDITOR` do not persist unless the file is saved.
 - Allows emitting filenames via the `-x` or `--output-file-name` flags for use with xargs and other similar tools.
   - Specify a delimiter to append to the filename via the `-d` or `--delimiter` flag. Defaults to `\n` if unspecified.
+- Tab completion of arguments for Bash and Zsh.
 
 # Origin
 NeoVipe is adapted and updated from the following sources:
@@ -30,4 +33,4 @@ NeoVipe is adapted and updated from the following sources:
 - The work of Joey Hess at https://github.com/madx/moreutils/blob/master/vipe under the terms of the GNU General Public License version 2.0.
 
 # License
-NeoVipe is licensed under the terms of the [GNU General Public License version 2.0](https://github.com/jBeale23/neovipe/blob/main/LICENSE).
+NeoVipe is licensed under the terms of the [GNU General Public License version 2.0](LICENSE).
