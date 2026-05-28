@@ -1,0 +1,27 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Lint (Shellcheck)
+    uses: ./.github/workflows/lint.yaml
+
+  format:
+    name: Format (shmft)
+    needs: lint
+    uses: ./.github/workflows/format.yaml
+
+  pipeline_completion:
+    name: Pipeline Completion
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Pipeline succeeded
+        if: needs.format.result == 'success'
+        run: printf "All checks passed successfully!\n"

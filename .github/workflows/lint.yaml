@@ -1,0 +1,15 @@
+name: Lint (Shellcheck)
+
+on:
+  workflow_call:
+
+jobs:
+  shellcheck:
+    name: Lint with Shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Run Shellcheck
+        uses: bewuethr/shellcheck-action@v2
