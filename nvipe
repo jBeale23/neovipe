@@ -54,9 +54,8 @@ usage() {
 		Usage: $(basename "${0}") [-t[=]TEMPLATE] [-p] [-x [-d[=]DELIMITER]] [-h]|[-v]
 
 		Options:
-		  -h, --help                    Show this help message and exit.
-		  -v, --version                 Show version information and exit.
-		      --init                    Emit a command string to initialize shell completion and exit.
+		  -h, --help                  Show this help message and exit.
+		  -v, --version               Show version information and exit.
 		  -t, --template [TEMPLATE]   Specify template for naming temporary file buffer.
 		  -p, --pipe-without-saving   If present, exiting \$EDITOR without saving doesn't emit an error.
 		  -x, --output-file-name      If present, output temporary file name instead of contents.
@@ -78,13 +77,6 @@ version() {
 		Adapted from the work of Julian Gruber at https://github.com/juliangruber/vipe under the terms of the MIT License.
 		Adapted from the work of Joey Hess at https://github.com/madx/moreutils/blob/master/vipe under the terms of the GNU GPL v2.0.
 	EOF
-}
-
-init() {
-	dir=$(CDPATH="" cd -- "$(dirname -- "${0}")" && pwd -P)
-	if [ -f "${dir}/nvipe-completion" ]; then
-		printf ". %s/nvipe-completion" "${dir}"
-	fi
 }
 
 main() {
@@ -130,10 +122,6 @@ while [ "${#}" -gt 0 ]; do
 		return 0
 	elif printf "%s\n" "${1}" | grep -qE -- "^(-v)|(--v(e(r(s(i(o(n)?)?)?)?)?)?)"; then
 		version
-		shift 1
-		return 0
-	elif printf "%s\n" "${1}" | grep -qE -- "--i(n(i(t)?)?)?"; then
-		printf "%s\n" "$(init)"
 		shift 1
 		return 0
 	elif printf "%s\n" "${1}" | grep -qE -- "(-p)|(--p(i(p(e(-(w(i(t(h(o(u(t(-(s(a(v(e)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?))"; then

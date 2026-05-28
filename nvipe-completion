@@ -9,7 +9,6 @@ _generate_nvipe_completions() {
     "-h: Show this help message and exit."
     "--version: Show version information and exit."
     "-V: Show version information and exit."
-    "--init: Emit a command string to initialize shell completion and exit."
     "--template: Specify template for naming temporary file buffer."
     "-t: Specify template for naming temporary file buffer."
     "--pipe-without-saving: If present, exiting \$EDITOR without saving doesn't emit an error."
