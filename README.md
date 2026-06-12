@@ -15,8 +15,10 @@ printf "change me\n" > "my_input.txt"
 
 # Installation
 
-Just copy nvipe into your `$PATH`, make it executable, and you're all set.
-To optionally enable tab completion for Bash and Zsh, source the included `nvipe-completion` file.
+Clone the repository and run `sudo make install` to install NeoVipe, its completions, and its man page for all users.
+
+Alternatively put nvipe anywhere on your `$PATH`, make it executable, and you're all set.
+You can manually install tab completions for Bash and Zsh by sourcing the included `nvipe-completions` file in your corresponding shell rc file.
 
 # Features
 
@@ -31,6 +33,12 @@ In it's latest incarnation NeoVipe offers the following on top of its base funct
 - Allows emitting filenames via the `-x` or `--output-file-name` flags for use with xargs and other similar tools.
   - Specify a delimiter to append to the filename via the `-d` or `--delimiter` flag. Defaults to `\n` if unspecified.
 - Tab completion of arguments for Bash and Zsh.
+
+# Uninstallation
+
+If you installed with `sudo make install`, you can remove NeoVipe, its manual page, and completions with `sudo make uninstall`.
+
+Alternatively, just delete NeoVipe, its manual page, and completion files if you installed it manually.
 
 # Origin
 
