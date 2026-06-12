@@ -134,21 +134,102 @@ output_file_name=0                           # By default, nvipe emits file cont
 delimiter="\n"                               # By default, nvipe delimits filename output with a newline.
 
 while [ "${#}" -gt 0 ]; do
-	if printf "%s\n" "${1}" | grep -qE -- "^(-h)|(--h(e(l(p)?)?)?)"; then
+	if printf "%s" "${1}" | grep -qE -- "^(-h)|(--h(e(l(p)?)?)?)"; then
 		usage
 		shift 1
 		return 0
-	elif printf "%s\n" "${1}" | grep -qE -- "^(-v)|(--v(e(r(s(i(o(n)?)?)?)?)?)?)"; then
+	elif printf "%s" "${1}" | grep -qE -- "^(-V)|(--v(e(r(s(i(o(n)?)?)?)?)?)?)"; then
 		version
 		shift 1
 		return 0
-	elif printf "%s\n" "${1}" | grep -qE -- "(-p)|(--p(i(p(e(-(w(i(t(h(o(u(t(-(s(a(v(e)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?))"; then
+	elif printf "%s" "${1}" | grep -qE -- "^-[px]{1,2}([dt])?"; then
+		tmp="${1}"
+		while [ -n "${tmp}" ]; do
+			tail="${tmp#?}"
+			curr="${tmp%"${tail}"}"
+			case "${curr}" in
+			p)
+				pipe_without_save=1
+				;;
+			x)
+				output_file_name=1
+				;;
+			d)
+				case "${tail}" in
+				*=*)
+					delimiter="${tail#*=}"
+					break
+					;;
+				*)
+					delimiter="${tail}"
+					break
+					;;
+				esac
+				if [ -z "${delimiter}" ]; then
+					if [ -n "${2}" ]; then
+						case "${2}" in
+						-*)
+							printf "%s: If '--delimiter' is specified, a delimiter string must be provided\n" "${_program_name}" >&2
+							return 2
+							;;
+						*)
+							delimiter="${2}"
+							shift 1
+							;;
+						esac
+					else
+						printf "%s: If '--delimiter' is specified, a delimiter string must be provided\n" "${_program_name}" >&2
+						return 2
+					fi
+				fi
+				;;
+			t)
+				case "${tail}" in
+				*=*)
+					template="${tail#*=}"
+					break
+					;;
+				*)
+					template="${tail}"
+					break
+					;;
+				esac
+				if [ -z "${template}" ]; then
+					if [ -n "${2}" ]; then
+						case "${2}" in
+						-*)
+							printf "%s: If '--template' is specified, a template string must be provided\n" "${_program_name}" >&2
+							return 2
+							;;
+						*)
+							template="${2}"
+							shift 1
+							;;
+						esac
+					else
+						printf "%s: If '--template' is specified, a template string must be provided\n" "${_program_name}" >&2
+						return 2
+					fi
+				fi
+				;;
+			*)
+				cat <<-EOF >&2
+					${_program_name}: invalid option -- '-${curr}'
+					Try '${_program_name} --help' for more information.
+				EOF
+				return 2
+				;;
+			esac
+			tmp="${tail}"
+		done
+		shift 1
+	elif printf "%s" "${1}" | grep -qE -- "^(-p)|(--p(i(p(e(-(w(i(t(h(o(u(t(-(s(a(v(e)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?))"; then
 		pipe_without_save=1
 		shift 1
-	elif printf "%s\n" "${1}" | grep -qE -- "(-x)|(--o(u(t(p(u(t(-(f(i(l(e(-(n(a(m(e)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?)"; then
+	elif printf "%s" "${1}" | grep -qE -- "^(-x)|(--o(u(t(p(u(t(-(f(i(l(e(-(n(a(m(e)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?)"; then
 		output_file_name=1
 		shift 1
-	elif printf "%s\n${1}" | grep -qE -- "(-d)|(--d(e(l(i(m(i(t(e(r)?)?)?)?)?)?)?)?).*?"; then
+	elif printf "%s${1}" | grep -qE -- "^(-d)|(--d(e(l(i(m(i(t(e(r)?)?)?)?)?)?)?)?).*?"; then
 		case "${1}" in
 		*=*)
 			leader="${1%%=*}="
@@ -202,12 +283,12 @@ while [ "${#}" -gt 0 ]; do
 					;;
 				esac
 			else
-				printf "%s: If '--delimiter' is specified, a delimiter string must be provided\n" "$(basename "${0}")" >&2
+				printf "%s: If '--delimiter' is specified, a delimiter string must be provided\n" "${_program_name}" >&2
 				return 2
 			fi
 		fi
 		shift 1
-	elif printf "%s\n" "${1}" | grep -qE -- "(-t)|(--t(e(m(p(l(a(t(e)?)?)?)?)?)?)?)).*?"; then
+	elif printf "%s" "${1}" | grep -qE -- "^(-t)|(--t(e(m(p(l(a(t(e)?)?)?)?)?)?)?)).*?"; then
 		case "${1}" in
 		*=*)
 			leader="${1%%=*}="
