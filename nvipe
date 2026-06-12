@@ -143,7 +143,7 @@ while [ "${#}" -gt 0 ]; do
 		shift 1
 		return 0
 	elif printf "%s" "${1}" | grep -qE -- "^-[px]{1,2}([dt])?"; then
-		tmp="${1}"
+		tmp="${1#-}"
 		while [ -n "${tmp}" ]; do
 			tail="${tmp#?}"
 			curr="${tmp%"${tail}"}"
