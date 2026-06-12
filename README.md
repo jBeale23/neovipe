@@ -1,8 +1,11 @@
 ![NeoVipe Logo](logo.png)
+
 # NeoVipe
+
 A modern rework of vipe, turning `$EDITOR` into a pipe friendly tool.
 
 Allows for piping in and out of `$EDITOR` even if it doesn't normally support pipes.
+
 ```sh
 printf "change me\n" > "my_input.txt"
 	head -n 1 "my_input.txt" | cut -f 1 | nvipe > "my_output.txt"
@@ -11,12 +14,14 @@ printf "change me\n" > "my_input.txt"
 ```
 
 # Installation
+
 Just copy nvipe into your `$PATH`, make it executable, and you're all set.
 To optionally enable tab completion for Bash and Zsh, source the included `nvipe-completion` file.
 
-
 # Features
+
 In it's latest incarnation NeoVipe offers the following on top of its base functionality:
+
 - Respect `$VISUAL` and fallback to `vi` if neither `$VISUAL` nor `$EDITOR` is specified.
 - Secure temporary file creation using `mktemp` (or at least more secure, see [here](https://www.gnu.org/software/coreutils/manual/html_node/mktemp-invocation.html) for caveats).
   - `$TMPDIR` is respected if it has been set in the environment.
@@ -28,9 +33,12 @@ In it's latest incarnation NeoVipe offers the following on top of its base funct
 - Tab completion of arguments for Bash and Zsh.
 
 # Origin
+
 NeoVipe is adapted and updated from the following sources:
+
 - The work of Julian Gruber at https://github.com/juliangruber/vipe under the terms of the MIT License.
 - The work of Joey Hess at https://github.com/madx/moreutils/blob/master/vipe under the terms of the GNU General Public License version 2.0.
 
 # License
+
 NeoVipe is licensed under the terms of the [GNU General Public License version 2.0](LICENSE).

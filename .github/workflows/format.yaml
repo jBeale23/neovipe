@@ -14,7 +14,7 @@ jobs:
       - name: Install shfmt
         uses: mfinelli/setup-shfmt@v4
         with:
-          shfmt-version: 'latest'
+          shfmt-version: "latest"
 
       - name: Run shfmt
         run: shfmt -d .
