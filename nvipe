@@ -69,17 +69,18 @@ usage() {
 	cat <<-EOF
 		Allows interaction with pipes via \$EDITOR by connecting it to stdin and stdout.
 
-		Usage: ${_program_name} [-t[=]TEMPLATE] [-p] [-x [-d[=]DELIMITER]] [-h]|[-v]
+		Usage: ${_program_name} [-h|V] | [-t[=| ]<TEMPLATE>] [-p] [-x [-d[=| ]<DELIMITER>]]
 
 		Options:
-		  -h, --help                  Show this help message and exit.
-		  -V, --version               Show version information and exit.
-		  -t, --template [TEMPLATE]   Specify template for naming temporary file buffer.
-		  -p, --pipe-without-saving   If present, exiting \$EDITOR without saving doesn't emit an error.
-		  -x, --output-file-name      If present, output temporary file name instead of contents.
-		  -d, --delimiter [DELIMITER] Set the delimiter emitted after filename when used in conjunction with file name output mode.
+		  -h, --help                   Show this help message and exit.
+		  -V, --version                Show version information and exit.
+		  -t, --template <TEMPLATE>    Specify template for naming temporary file buffer.
+		  -p, --pipe-without-saving    If present, exiting \$EDITOR without saving doesn't emit an error.
+		  -x, --output-file-name       If present, output temporary file name instead of contents.
+		  -d, --delimiter <DELIMITER>  Set the delimiter emitted after filename when used in conjunction with file name output mode.
+		      --                       Stop processing command line arguments.
 
-		Example:
+		Examples:
 			printf "change me\n" > "my_input.txt"
 			head -n 1 "my_input.txt" | cut -f 1 | ${_program_name} > "my_output.txt"
 			cat "my_output.txt"
