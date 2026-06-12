@@ -61,16 +61,19 @@
 # 2: Error During Argument Parsing      #
 # 111: Failure to Create Temporary File #
 # ------------------------------------- #
+#
+_program_name="$(basename "${0}")"
+_version="1.0.0"
 
 usage() {
 	cat <<-EOF
 		Allows interaction with pipes via \$EDITOR by connecting it to stdin and stdout.
 
-		Usage: $(basename "${0}") [-t[=]TEMPLATE] [-p] [-x [-d[=]DELIMITER]] [-h]|[-v]
+		Usage: ${_program_name} [-t[=]TEMPLATE] [-p] [-x [-d[=]DELIMITER]] [-h]|[-v]
 
 		Options:
 		  -h, --help                  Show this help message and exit.
-		  -v, --version               Show version information and exit.
+		  -V, --version               Show version information and exit.
 		  -t, --template [TEMPLATE]   Specify template for naming temporary file buffer.
 		  -p, --pipe-without-saving   If present, exiting \$EDITOR without saving doesn't emit an error.
 		  -x, --output-file-name      If present, output temporary file name instead of contents.
@@ -78,7 +81,7 @@ usage() {
 
 		Example:
 			printf "change me\n" > "my_input.txt"
-			head -n 1 "my_input.txt" | cut -f 1 | $(basename "${0}") > "my_output.txt"
+			head -n 1 "my_input.txt" | cut -f 1 | ${_program_name} > "my_output.txt"
 			cat "my_output.txt"
 			This text could be changed to anything you want.
 	EOF
@@ -86,7 +89,7 @@ usage() {
 
 version() {
 	cat <<-EOF
-		$(basename "${0}") 1.0.0
+		NeoVipe ${_version}
 		Copyright © 2026 Josh Beale <jbeale2023@gmail.com>.
 		Licence: The GNU General Public License v2.0
 		Adapted from the work of Julian Gruber at https://github.com/juliangruber/vipe under the terms of the MIT License.
@@ -116,19 +119,19 @@ main() {
 			fi
 			return 0
 		else
-			printf "%s FATAL: %s exited without saving\n" "$(basename "${0}")" "${VISUAL:-${EDITOR:-vi}}" >&2
+			printf "%s FATAL: %s exited without saving\n" "${_program_name}" "${VISUAL:-${EDITOR:-vi}}" >&2
 			return 1
 		fi
 	else
-		printf "%s FATAL: failed to create temporary file\n" "$(basename "${0}")" >&2
+		printf "%s FATAL: failed to create temporary file\n" "${_program_name}" >&2
 		return 111
 	fi
 }
 
-template="$(basename "${0}").XXXXXXXXXXXXXXXX" # Default template used when no user-provided template is present
-pipe_without_save=0                            # By default, nvipe emits an error if the user closes the temporary file without saving.
-output_file_name=0                             # By default, nvipe emits file contents instead of the path to the temporary file.
-delimiter="\n"                                 # By default, nvipe delimits filename output with a newline.
+template="${_program_name}.XXXXXXXXXXXXXXXX" # Default template used when no user-provided template is present
+pipe_without_save=0                          # By default, nvipe emits an error if the user closes the temporary file without saving.
+output_file_name=0                           # By default, nvipe emits file contents instead of the path to the temporary file.
+delimiter="\n"                               # By default, nvipe delimits filename output with a newline.
 
 while [ "${#}" -gt 0 ]; do
 	if printf "%s\n" "${1}" | grep -qE -- "^(-h)|(--h(e(l(p)?)?)?)"; then
@@ -182,7 +185,7 @@ while [ "${#}" -gt 0 ]; do
 			delimiter="${1#-d}"
 			;;
 		*)
-			printf "%s: invalid delimiter format -- '%s\n'" "$(basename "${0}")" "${1}" >&2
+			printf "%s: invalid delimiter format -- '%s\n'" "${_program_name}" "${1}" >&2
 			return 2
 			;;
 		esac
@@ -190,7 +193,7 @@ while [ "${#}" -gt 0 ]; do
 			if [ -n "${2}" ]; then
 				case "${2}" in
 				-*)
-					printf "%s: If '--delimiter' is specified, a delimiter string must be provided\n" "$(basename "${0}")" >&2
+					printf "%s: If '--delimiter' is specified, a delimiter string must be provided\n" "${_program_name}" >&2
 					return 2
 					;;
 				*)
@@ -238,7 +241,7 @@ while [ "${#}" -gt 0 ]; do
 			template="${1#-t}"
 			;;
 		*)
-			printf "%s: invalid template format -- '%s\n'" "$(basename "${0}")" "${1}" >&2
+			printf "%s: invalid template format -- '%s\n'" "${_program_name}" "${1}" >&2
 			return 2
 			;;
 		esac
@@ -246,7 +249,7 @@ while [ "${#}" -gt 0 ]; do
 			if [ -n "${2}" ]; then
 				case "${2}" in
 				-*)
-					printf "%s: If '--template' is specified, a template string must be provided\n" "$(basename "${0}")" >&2
+					printf "%s: If '--template' is specified, a template string must be provided\n" "${_program_name}" >&2
 					return 2
 					;;
 				*)
@@ -255,7 +258,7 @@ while [ "${#}" -gt 0 ]; do
 					;;
 				esac
 			else
-				printf "%s: If '--template' is specified, a template string must be provided\n" "$(basename "${0}")" >&2
+				printf "%s: If '--template' is specified, a template string must be provided\n" "${_program_name}" >&2
 				return 2
 			fi
 		fi
@@ -265,8 +268,8 @@ while [ "${#}" -gt 0 ]; do
 		break
 	else
 		cat <<-EOF >&2
-			$(basename "${0}"): invalid option -- '${1}'
-			Try '$(basename "${0}") --help' for more information.
+			${_program_name}: invalid option -- '${1}'
+			Try '${_program_name} --help' for more information.
 		EOF
 		return 2
 	fi
