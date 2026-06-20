@@ -35,7 +35,7 @@ install-nvipe:
 	@printf "Installing NeoVipe to %s/bin...\n" $(DESTDIR)$(PREFIX)
 	@$(INSTALL) -Dm 755 nvipe $(DESTDIR)$(PREFIX)/bin/nvipe
 
-install-nvipe-info: info
+install-nvipe-info: docs/nvipe.1.gz
 	@printf "Installing NeoVipe bash completion to %s...\n" $(DESTDIR)$(BASH_COMP_DIR)
 	@$(INSTALL) -Dm 644 docs/nvipe-completion $(DESTDIR)$(BASH_COMP_DIR)/nvipe
 	@printf "Installing NeoVipe zsh completion to %s...\n" $(DESTDIR)$(ZSH_COMP_DIR)
